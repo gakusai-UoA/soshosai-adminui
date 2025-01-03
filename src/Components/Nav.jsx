@@ -21,9 +21,7 @@ const Nav = () => {
                   aria-hidden="true"
                   data-slot="icon"
                 >
-                  <path
-                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-                  />
+                  <path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                 </svg>
                 <svg
                   className="hidden h-6 w-6"
@@ -32,9 +30,7 @@ const Nav = () => {
                   aria-hidden="true"
                   data-slot="icon"
                 >
-                  <path
-                    d="M6 18 18 6M6 6l12 12"
-                  />
+                  <path d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
@@ -42,7 +38,7 @@ const Nav = () => {
               <div className="flex shrink-0 items-center">
                 <img
                   className="h-8 w-auto"
-                  src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500"
+                  src="./logo.png"
                   alt="Your Company"
                 />
               </div>
@@ -50,8 +46,7 @@ const Nav = () => {
                 <div className="flex space-x-4">
                   <a
                     href="/"
-                    className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
-                    aria-current="page"
+                    className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
                   >
                     ダッシュボード
                   </a>

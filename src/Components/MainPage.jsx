@@ -1,8 +1,8 @@
 const MainPage = () => {
-  return (
-    <>
-      
-    </>
+  return(
+    <div>
+      <h1>メインページ</h1>
+    </div>
   );
 };
 

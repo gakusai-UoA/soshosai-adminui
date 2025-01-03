@@ -4,6 +4,9 @@ import Nav from "./components/Nav";
 import MainPage from "./Components/MainPage";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import TicketsPage from "./Components/TicketsPage";
+import GroupsPage from "./Components/GroupsPage";
+import LogsPage from "./Components/LogsPage";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -49,11 +52,13 @@ function App() {
         const data = await response.json();
         let authority = data.Authority;
         if (authority == "admin") {
-          Cookies.set("staffId", staffId, { expires: inOneMinutes });
+          Cookies.set("staffId", staffId, { expires: 1 });
+          Cookies.set("staffAuthority", authority, { expires: 1 });
           setIsModalOpen(false);
           setIsLoading(false);
         } else if (authority == "staff") {
           Cookies.set("staffId", staffId, { expires: inOneMinutes });
+          Cookies.set("staffAuthority", authority, { expires: inOneMinutes });
           setIsModalOpen(false);
           setIsLoading(false);
         } else {
@@ -117,6 +122,9 @@ function App() {
       )}
       <Routes>
         <Route path="/" element={<MainPage />} />
+        <Route path="/tickets" element={<TicketsPage />} />
+        <Route path="/groups" element={<GroupsPage />} />
+        <Route path="/logs" element={<LogsPage />} />
       </Routes>
     </BrowserRouter>
   );
