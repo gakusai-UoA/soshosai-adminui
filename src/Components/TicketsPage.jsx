@@ -79,9 +79,10 @@ const TicketsPage = () => {
   };
 
   const filterTickets = (ticketId, groupId) => {
-    const filtered = tickets.filter((ticket) =>
-      ticket.TicketId.toLowerCase().includes(ticketId.toLowerCase()) &&
-      ticket.OwnerId.toLowerCase().includes(groupId.toLowerCase())
+    const filtered = tickets.filter(
+      (ticket) =>
+        ticket.TicketId.toLowerCase().includes(ticketId.toLowerCase()) &&
+        ticket.OwnerId.toLowerCase().includes(groupId.toLowerCase())
     );
     setFilteredTickets(filtered);
   };
@@ -92,7 +93,10 @@ const TicketsPage = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-screen" aria-label="読み込み中">
+      <div
+        className="flex justify-center items-center min-h-screen"
+        aria-label="読み込み中"
+      >
         <div className="flex flex-col justify-center items-center">
           <div className="animate-ping h-10 w-10 bg-gray-800 rounded-full m-5"></div>
           <a className="text-3xl m-5">読み込み中...</a>
@@ -127,20 +131,38 @@ const TicketsPage = () => {
       <table className="min-w-full bg-white border-collapse border border-gray-200">
         <thead>
           <tr>
-            <th className="py-2 px-4 border border-gray-200 text-center">チケットID</th>
-            <th className="py-2 px-4 border border-gray-200 text-center">所有者ID</th>
-            <th className="py-2 px-4 border border-gray-200 text-center">発行者</th>
-            <th className="py-2 px-4 border border-gray-200 text-center">発行場所</th>
-            <th className="py-2 px-4 border border-gray-200 text-center">発行時刻</th>
-            <th className="py-2 px-4 border border-gray-200 text-center">使用済み</th>
-            <th className="py-2 px-4 border border-gray-200 text-center">チケットタイプ</th>
-            <th className="py-2 px-4 border border-gray-200 text-center">編集</th>
+            <th className="py-2 px-4 border border-gray-200 text-center">
+              チケットID
+            </th>
+            <th className="py-2 px-4 border border-gray-200 text-center">
+              所有者ID
+            </th>
+            <th className="py-2 px-4 border border-gray-200 text-center">
+              発行者
+            </th>
+            <th className="py-2 px-4 border border-gray-200 text-center">
+              発行場所
+            </th>
+            <th className="py-2 px-4 border border-gray-200 text-center">
+              発行時刻
+            </th>
+            <th className="py-2 px-4 border border-gray-200 text-center">
+              使用済み
+            </th>
+            <th className="py-2 px-4 border border-gray-200 text-center">
+              チケットタイプ
+            </th>
+            <th className="py-2 px-4 border border-gray-200 text-center">
+              編集
+            </th>
           </tr>
         </thead>
         <tbody>
           {filteredTickets.map((ticket) => (
             <tr key={ticket.TicketId}>
-              <td className="py-2 px-4 border border-gray-200 text-center">{ticket.TicketId}</td>
+              <td className="py-2 px-4 border border-gray-200 text-center">
+                {ticket.TicketId}
+              </td>
               <td className="py-2 px-4 border border-gray-200 text-center">
                 <button
                   className="text-blue-500 underline"
@@ -149,11 +171,21 @@ const TicketsPage = () => {
                   {ticket.OwnerId}
                 </button>
               </td>
-              <td className="py-2 px-4 border border-gray-200 text-center">{ticket.Issuer}</td>
-              <td className="py-2 px-4 border border-gray-200 text-center">{ticket.IssuedPlace}</td>
-              <td className="py-2 px-4 border border-gray-200 text-center">{ticket.IssuedTime}</td>
-              <td className="py-2 px-4 border border-gray-200 text-center">{ticket.IsUsed ? "はい" : "いいえ"}</td>
-              <td className="py-2 px-4 border border-gray-200 text-center">{ticket.TicketType}</td>
+              <td className="py-2 px-4 border border-gray-200 text-center">
+                {ticket.Issuer}
+              </td>
+              <td className="py-2 px-4 border border-gray-200 text-center">
+                {ticket.IssuedPlace}
+              </td>
+              <td className="py-2 px-4 border border-gray-200 text-center">
+                {ticket.IssuedTime}
+              </td>
+              <td className="py-2 px-4 border border-gray-200 text-center">
+                {ticket.IsUsed}
+              </td>
+              <td className="py-2 px-4 border border-gray-200 text-center">
+                {ticket.TicketType}
+              </td>
               <td className="py-2 px-4 border border-gray-200 text-center">
                 <button
                   className="bg-blue-500 text-white px-4 py-2 rounded"
@@ -172,21 +204,11 @@ const TicketsPage = () => {
           <div className="bg-white p-6 rounded shadow-lg">
             <h2 className="text-xl font-bold mb-4">チケット編集</h2>
             <label className="block mb-2">
-              所有者ID:
+              チケットID:
               <input
                 type="text"
                 name="OwnerId"
-                value={currentTicket.OwnerId}
-                onChange={handleInputChange}
-                className="border p-2 w-full"
-              />
-            </label>
-            <label className="block mb-2">
-              発行者:
-              <input
-                type="text"
-                name="Issuer"
-                value={currentTicket.Issuer}
+                value={currentTicket.TicketId}
                 onChange={handleInputChange}
                 className="border p-2 w-full"
               />
@@ -216,8 +238,15 @@ const TicketsPage = () => {
               <input
                 type="checkbox"
                 name="IsUsed"
-                checked={currentTicket.IsUsed}
-                onChange={(e) => handleInputChange({ target: { name: "IsUsed", value: e.target.checked } })}
+                checked={currentTicket.IsUsed == "TRUE"}
+                onChange={(e) =>
+                  handleInputChange({
+                    target: {
+                      name: "IsUsed",
+                      value: e.target.checked ? "TRUE" : "FALSE",
+                    },
+                  })
+                }
                 className="border p-2"
               />
             </label>
