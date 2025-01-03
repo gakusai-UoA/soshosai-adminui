@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-import Nav from "./components/Nav";
+import Nav from "./Components/Nav";
 import MainPage from "./Components/MainPage";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
