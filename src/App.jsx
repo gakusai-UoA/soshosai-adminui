@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import "./App.css";
 import Nav from "./Components/Nav";
 import MainPage from "./Components/MainPage";
@@ -17,115 +17,150 @@ function App() {
     useState("担当者IDを入力してください");
 
   useEffect(() => {
-    if (staffId.length == 37) {
+    if (staffId.length === 37 && Cookies.get("staffAuthority")) {
       setIsModalOpen(false);
     } else {
       setIsModalOpen(true);
     }
-  }, []);
+  }, [staffId]);
 
   const handleModalSubmit = async () => {
-    if (staffId.length != 37) {
+    if (staffId.length !== 37) {
       setIsError(true);
       return;
     } else {
-      if (staffId.charAt(0) != "s") {
+      if (staffId.charAt(0) !== "s") {
         setIsError(true);
         setErrorMessage("入力されたIDはスタッフのものではありません。");
         return;
       }
       setIsLoading(true);
-      const response = await fetch(
-        "https://100-ticket-server.a-gakusai.workers.dev/staffs/staffLogin",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            staffId: staffId,
-          }),
-        }
-      );
-      if (response.ok) {
-        var inOneMinutes = new Date(new Date().getTime() + 1 * 60 * 1000);
-        const data = await response.json();
-        let authority = data.Authority;
-        if (authority == "admin") {
-          Cookies.set("staffId", staffId, { expires: 1 });
-          Cookies.set("staffAuthority", authority, { expires: 1 });
-          setIsModalOpen(false);
-          setIsLoading(false);
-        } else if (authority == "staff") {
-          Cookies.set("staffId", staffId, { expires: inOneMinutes });
-          Cookies.set("staffAuthority", authority, { expires: inOneMinutes });
-          setIsModalOpen(false);
-          setIsLoading(false);
+      try {
+        const response = await fetch(
+          "https://api.100ticket.soshosai.com/staffs/staffLogin",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              staffId: staffId,
+            }),
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          let authority = data.Authority;
+          if (authority === "admin") {
+            Cookies.set("staffId", staffId, { expires: 1 });
+            Cookies.set("staffAuthority", authority, { expires: 1 });
+            setIsModalOpen(false);
+          } else if (authority === "staff") {
+            var inOneMinutes = new Date(new Date().getTime() + 1 * 60 * 1000);
+            Cookies.set("staffId", staffId, { expires: inOneMinutes });
+            Cookies.set("staffAuthority", authority, { expires: inOneMinutes });
+            setIsModalOpen(false);
+          } else {
+            setIsError(true);
+            setErrorMessage("権限がありませんでした。");
+          }
         } else {
           setIsError(true);
-          setErrorMessage("権限がありませんでした。");
-          setIsLoading(false);
+          setErrorMessage("ログインができませんでした。");
         }
-      } else {
+      } catch (error) {
         setIsError(true);
-        setErrorMessage("ログインができませんでした。");
+        setErrorMessage("サーバーとの通信に失敗しました。");
+      } finally {
         setIsLoading(false);
       }
     }
   };
 
+  const handleInputChange = (e) => {
+    setStaffId(e.target.value);
+  };
+
   return (
     <BrowserRouter>
-      <div className="w-full">
-        <Nav className="w-full fixed top-0 left-0 bg-gray-800 text-white p-4" />
-      </div>
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
-          <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-            {isLoading ? (
+      <div className="App">
+        <Nav />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              Cookies.get("staffAuthority") ? (
+                <MainPage />
+              ) : (
+                <Navigate to="/auth" />
+              )
+            }
+          />
+          <Route
+            path="/tickets"
+            element={
+              Cookies.get("staffAuthority") ? (
+                <TicketsPage />
+              ) : (
+                <Navigate to="/auth" />
+              )
+            }
+          />
+          <Route
+            path="/groups"
+            element={
+              Cookies.get("staffAuthority") ? (
+                <GroupsPage />
+              ) : (
+                <Navigate to="/auth" />
+              )
+            }
+          />
+          <Route
+            path="/qr"
+            element={
+              Cookies.get("staffAuthority") ? (
+                <QRPage />
+              ) : (
+                <Navigate to="/auth" />
+              )
+            }
+          />
+          <Route
+            path="/auth"
+            element={
               <div
-                className="flex justify-center items-center p-5"
-                aria-label="読み込み中"
+                className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ${
+                  isModalOpen ? "block" : "hidden"
+                }`}
               >
-                <div className="flex flex-col justify-center items-center">
-                  <div className="animate-ping h-10 w-10 bg-gray-800 rounded-full m-5"></div>
-                  <a className="text-3xl m-5">ログインしています...</a>
+                <div className="bg-white p-6 rounded shadow-lg w-full max-w-md mx-auto">
+                  <h2 className="text-xl font-bold mb-4">スタッフ認証</h2>
+                  <label className="block mb-2">
+                    スタッフID:
+                    <input
+                      type="text"
+                      value={staffId}
+                      onChange={handleInputChange}
+                      className="border p-2 w-full"
+                    />
+                  </label>
+                  {isError && <p className="text-red-500">{errorMessage}</p>}
+                  <div className="flex justify-end">
+                    <button
+                      className="bg-blue-500 text-white px-4 py-2 rounded"
+                      onClick={handleModalSubmit}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "認証中..." : "送信"}
+                    </button>
+                  </div>
                 </div>
               </div>
-            ) : (
-              <>
-                <h2 className="text-2xl font-semibold mb-4">ログイン</h2>
-                <label className="block mb-4">
-                  担当者ID:
-                  <input
-                    type="text"
-                    value={staffId}
-                    onChange={(e) => setStaffId(e.target.value)}
-                    className="border p-2 w-full mt-1 rounded"
-                  />
-                </label>
-                {isError && (
-                  <label className="block mb-4 text-red-500">
-                    {errorMessage}
-                  </label>
-                )}
-                <button
-                  onClick={handleModalSubmit}
-                  className="mt-4 p-2 bg-blue-500 text-white rounded w-full"
-                >
-                  確認
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-      <Routes>
-        <Route path="/" element={<MainPage />} />
-        <Route path="/tickets" element={<TicketsPage />} />
-        <Route path="/groups" element={<GroupsPage />} />
-        <Route path="/qr" element={<QRPage />} />
-      </Routes>
+            }
+          />
+        </Routes>
+      </div>
     </BrowserRouter>
   );
 }
