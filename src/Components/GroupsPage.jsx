@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import { useLocation, useNavigate } from "react-router-dom";
 
 const GroupsPage = () => {
   const [groups, setGroups] = useState([]);
@@ -18,7 +18,6 @@ const GroupsPage = () => {
     direction: "ascending",
   });
 
-  const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,18 +42,6 @@ const GroupsPage = () => {
 
     fetchGroups();
   }, []);
-
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const id = params.get("id");
-    if (id) {
-      setSearchTerm(id);
-      const filtered = groups.filter((group) =>
-        group.GroupId.toLowerCase().includes(id.toLowerCase())
-      );
-      setFilteredGroups(filtered);
-    }
-  }, [location.search, groups]);
 
   const handleEditClick = (group) => {
     setCurrentGroup(group);
@@ -136,94 +123,96 @@ const GroupsPage = () => {
           className="border p-2 w-full"
         />
       </div>
-      <table className="min-w-full bg-white border-collapse border border-gray-200">
-        <thead>
-          <tr>
-            <th
-              className="py-2 px-4 border border-gray-200 text-center cursor-pointer"
-              onClick={() => handleSort("GroupId")}
-            >
-              グループID
-            </th>
-            <th
-              className="py-2 px-4 border border-gray-200 text-center cursor-pointer"
-              onClick={() => handleSort("AgeRange")}
-            >
-              年齢帯
-            </th>
-            <th
-              className="py-2 px-4 border border-gray-200 text-center cursor-pointer"
-              onClick={() => handleSort("Gender")}
-            >
-              代表者性別
-            </th>
-            <th
-              className="py-2 px-4 border border-gray-200 text-center cursor-pointer"
-              onClick={() => handleSort("MemberCount")}
-            >
-              人数
-            </th>
-            <th
-              className="py-2 px-4 border border-gray-200 text-center cursor-pointer"
-              onClick={() => handleSort("Entrance")}
-            >
-              受付場所
-            </th>
-            <th
-              className="py-2 px-4 border border-gray-200 text-center cursor-pointer"
-              onClick={() => handleSort("EntranceTime")}
-            >
-              受付時刻
-            </th>
-            {staffAuthority === "admin" && (
-              <th className="py-2 px-4 border border-gray-200 text-center">
-                編集
-              </th>
-            )}
-          </tr>
-        </thead>
-        <tbody>
-          {filteredGroups.map((group) => (
-            <tr key={group.GroupId}>
-              <td
-                className="py-2 px-4 border border-gray-200 text-center cursor-pointer text-blue-500 underline"
-                onClick={() => handleGroupIdClick(group.GroupId)}
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border-collapse border border-gray-200">
+          <thead>
+            <tr>
+              <th
+                className="py-2 px-4 border border-gray-200 text-center cursor-pointer"
+                onClick={() => handleSort("GroupId")}
               >
-                {group.GroupId}
-              </td>
-              <td className="py-2 px-4 border border-gray-200 text-center">
-                {group.AgeRange}
-              </td>
-              <td className="py-2 px-4 border border-gray-200 text-center">
-                {group.Gender}
-              </td>
-              <td className="py-2 px-4 border border-gray-200 text-center">
-                {group.MemberCount}
-              </td>
-              <td className="py-2 px-4 border border-gray-200 text-center">
-                {group.Entrance}
-              </td>
-              <td className="py-2 px-4 border border-gray-200 text-center">
-                {group.EntranceTime}
-              </td>
+                グループID
+              </th>
+              <th
+                className="py-2 px-4 border border-gray-200 text-center cursor-pointer"
+                onClick={() => handleSort("AgeRange")}
+              >
+                年齢帯
+              </th>
+              <th
+                className="py-2 px-4 border border-gray-200 text-center cursor-pointer"
+                onClick={() => handleSort("Gender")}
+              >
+                代表者性別
+              </th>
+              <th
+                className="py-2 px-4 border border-gray-200 text-center cursor-pointer"
+                onClick={() => handleSort("MemberCount")}
+              >
+                人数
+              </th>
+              <th
+                className="py-2 px-4 border border-gray-200 text-center cursor-pointer"
+                onClick={() => handleSort("Entrance")}
+              >
+                受付場所
+              </th>
+              <th
+                className="py-2 px-4 border border-gray-200 text-center cursor-pointer"
+                onClick={() => handleSort("EntranceTime")}
+              >
+                受付時刻
+              </th>
               {staffAuthority === "admin" && (
-                <td className="py-2 px-4 border border-gray-200 text-center">
-                  <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded"
-                    onClick={() => handleEditClick(group)}
-                  >
-                    編集
-                  </button>
-                </td>
+                <th className="py-2 px-4 border border-gray-200 text-center">
+                  編集
+                </th>
               )}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredGroups.map((group) => (
+              <tr key={group.GroupId}>
+                <td
+                  className="py-2 px-4 border border-gray-200 text-center cursor-pointer text-blue-500 underline"
+                  onClick={() => handleGroupIdClick(group.GroupId)}
+                >
+                  {group.GroupId}
+                </td>
+                <td className="py-2 px-4 border border-gray-200 text-center">
+                  {group.AgeRange}
+                </td>
+                <td className="py-2 px-4 border border-gray-200 text-center">
+                  {group.Gender}
+                </td>
+                <td className="py-2 px-4 border border-gray-200 text-center">
+                  {group.MemberCount}
+                </td>
+                <td className="py-2 px-4 border border-gray-200 text-center">
+                  {group.Entrance}
+                </td>
+                <td className="py-2 px-4 border border-gray-200 text-center">
+                  {group.EntranceTime}
+                </td>
+                {staffAuthority === "admin" && (
+                  <td className="py-2 px-4 border border-gray-200 text-center">
+                    <button
+                      className="bg-blue-500 text-white px-4 py-2 rounded"
+                      onClick={() => handleEditClick(group)}
+                    >
+                      編集
+                    </button>
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-lg">
+          <div className="bg-white p-6 rounded shadow-lg w-full max-w-md mx-auto">
             <h2 className="text-xl font-bold mb-4">グループ編集</h2>
             <label className="block mb-2">
               グループID:

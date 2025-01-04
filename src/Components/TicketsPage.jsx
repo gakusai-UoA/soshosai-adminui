@@ -48,6 +48,18 @@ const TicketsPage = () => {
     }
   }, [location.search, tickets]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const id = params.get("ticketid");
+    if (id) {
+      setGroupSearchTerm(id);
+      const filtered = tickets.filter((ticket) =>
+        ticket.TicketId.toLowerCase().includes(id.toLowerCase())
+      );
+      setFilteredTickets(filtered);
+    }
+  }, [location.search, tickets]);
+
   const handleEditClick = (ticket) => {
     setCurrentTicket(ticket);
     setIsModalOpen(true);
@@ -128,86 +140,88 @@ const TicketsPage = () => {
           className="border p-2 w-full"
         />
       </div>
-      <table className="min-w-full bg-white border-collapse border border-gray-200">
-        <thead>
-          <tr>
-            <th className="py-2 px-4 border border-gray-200 text-center">
-              チケットID
-            </th>
-            <th className="py-2 px-4 border border-gray-200 text-center">
-              所有者ID
-            </th>
-            <th className="py-2 px-4 border border-gray-200 text-center">
-              発行者
-            </th>
-            <th className="py-2 px-4 border border-gray-200 text-center">
-              発行場所
-            </th>
-            <th className="py-2 px-4 border border-gray-200 text-center">
-              発行時刻
-            </th>
-            <th className="py-2 px-4 border border-gray-200 text-center">
-              使用済み
-            </th>
-            <th className="py-2 px-4 border border-gray-200 text-center">
-              チケットタイプ
-            </th>
-            <th className="py-2 px-4 border border-gray-200 text-center">
-              編集
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredTickets.map((ticket) => (
-            <tr key={ticket.TicketId}>
-              <td className="py-2 px-4 border border-gray-200 text-center">
-                {ticket.TicketId}
-              </td>
-              <td className="py-2 px-4 border border-gray-200 text-center">
-                <button
-                  className="text-blue-500 underline"
-                  onClick={() => handleOwnerIdClick(ticket.OwnerId)}
-                >
-                  {ticket.OwnerId}
-                </button>
-              </td>
-              <td className="py-2 px-4 border border-gray-200 text-center">
-                {ticket.Issuer}
-              </td>
-              <td className="py-2 px-4 border border-gray-200 text-center">
-                {ticket.IssuedPlace}
-              </td>
-              <td className="py-2 px-4 border border-gray-200 text-center">
-                {ticket.IssuedTime}
-              </td>
-              <td className="py-2 px-4 border border-gray-200 text-center">
-                {ticket.IsUsed}
-              </td>
-              <td className="py-2 px-4 border border-gray-200 text-center">
-                {ticket.TicketType}
-              </td>
-              <td className="py-2 px-4 border border-gray-200 text-center">
-                <button
-                  className="bg-blue-500 text-white px-4 py-2 rounded"
-                  onClick={() => handleEditClick(ticket)}
-                >
-                  編集
-                </button>
-              </td>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border-collapse border border-gray-200">
+          <thead>
+            <tr>
+              <th className="py-2 px-4 border border-gray-200 text-center">
+                チケットID
+              </th>
+              <th className="py-2 px-4 border border-gray-200 text-center">
+                所有者ID
+              </th>
+              <th className="py-2 px-4 border border-gray-200 text-center">
+                発行者
+              </th>
+              <th className="py-2 px-4 border border-gray-200 text-center">
+                発行場所
+              </th>
+              <th className="py-2 px-4 border border-gray-200 text-center">
+                発行時刻
+              </th>
+              <th className="py-2 px-4 border border-gray-200 text-center">
+                使用済み
+              </th>
+              <th className="py-2 px-4 border border-gray-200 text-center">
+                チケットタイプ
+              </th>
+              <th className="py-2 px-4 border border-gray-200 text-center">
+                編集
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredTickets.map((ticket) => (
+              <tr key={ticket.TicketId}>
+                <td className="py-2 px-4 border border-gray-200 text-center">
+                  {ticket.TicketId}
+                </td>
+                <td className="py-2 px-4 border border-gray-200 text-center">
+                  <button
+                    className="text-blue-500 underline"
+                    onClick={() => handleOwnerIdClick(ticket.OwnerId)}
+                  >
+                    {ticket.OwnerId}
+                  </button>
+                </td>
+                <td className="py-2 px-4 border border-gray-200 text-center">
+                  {ticket.Issuer}
+                </td>
+                <td className="py-2 px-4 border border-gray-200 text-center">
+                  {ticket.IssuedPlace}
+                </td>
+                <td className="py-2 px-4 border border-gray-200 text-center">
+                  {ticket.IssuedTime}
+                </td>
+                <td className="py-2 px-4 border border-gray-200 text-center">
+                  {ticket.IsUsed}
+                </td>
+                <td className="py-2 px-4 border border-gray-200 text-center">
+                  {ticket.TicketType}
+                </td>
+                <td className="py-2 px-4 border border-gray-200 text-center">
+                  <button
+                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                    onClick={() => handleEditClick(ticket)}
+                  >
+                    編集
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-lg">
+          <div className="bg-white p-6 rounded shadow-lg w-full max-w-md mx-auto">
             <h2 className="text-xl font-bold mb-4">チケット編集</h2>
             <label className="block mb-2">
               チケットID:
               <input
                 type="text"
-                name="OwnerId"
+                name="TicketId"
                 value={currentTicket.TicketId}
                 onChange={handleInputChange}
                 className="border p-2 w-full"
@@ -238,7 +252,7 @@ const TicketsPage = () => {
               <input
                 type="checkbox"
                 name="IsUsed"
-                checked={currentTicket.IsUsed == "TRUE"}
+                checked={currentTicket.IsUsed === "TRUE"}
                 onChange={(e) =>
                   handleInputChange({
                     target: {

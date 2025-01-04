@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import TicketsPage from "./Components/TicketsPage";
 import GroupsPage from "./Components/GroupsPage";
-import LogsPage from "./Components/LogsPage";
+import QRPage from "./Components/QRPage";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -124,7 +124,7 @@ function App() {
         <Route path="/" element={<MainPage />} />
         <Route path="/tickets" element={<TicketsPage />} />
         <Route path="/groups" element={<GroupsPage />} />
-        <Route path="/logs" element={<LogsPage />} />
+        <Route path="/qr" element={<QRPage />} />
       </Routes>
     </BrowserRouter>
   );
