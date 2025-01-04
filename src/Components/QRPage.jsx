@@ -54,7 +54,7 @@ const QRPage = () => {
             if (qrText.startsWith("t")) {
               navigate(`/tickets?ticketid=${qrText}`);
             } else if (qrText.startsWith("g")) {
-              navigate(`/groups?id=${qrText}`);
+              navigate(`/tickets?id=${qrText}`);
             }
           } else {
             setQrError("無効なQRコードです");
