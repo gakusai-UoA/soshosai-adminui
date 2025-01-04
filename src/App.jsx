@@ -52,8 +52,8 @@ function App() {
           const data = await response.json();
           let authority = data.Authority;
           if (authority === "admin") {
-            Cookies.set("staffId", staffId, { expires: 1 });
-            Cookies.set("staffAuthority", authority, { expires: 1 });
+            Cookies.set("staffId", staffId, { expires: 0.1 });
+            Cookies.set("staffAuthority", authority, { expires: 0.1 });
             setIsModalOpen(false);
           } else if (authority === "staff") {
             var inOneMinutes = new Date(new Date().getTime() + 1 * 60 * 1000);
