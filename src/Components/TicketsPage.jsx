@@ -6,10 +6,14 @@ const TicketsPage = () => {
   const [filteredTickets, setFilteredTickets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
+  const [isModalInputError, setIsModalInputError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDisableModalOpen, setIsDisableModalOpen] = useState(false);
   const [currentTicket, setCurrentTicket] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [groupSearchTerm, setGroupSearchTerm] = useState("");
+  const [disableReason, setDisableReason] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -19,6 +23,11 @@ const TicketsPage = () => {
         const response = await fetch(
           "https://api.100ticket.soshosai.com/tickets/getTickets"
         );
+        if (response.status === 429) {
+          setIsError(true);
+          setErrorMessage("読み込み回数の上限を突破しました。");
+          return;
+        }
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -29,33 +38,29 @@ const TicketsPage = () => {
       } catch (error) {
         console.error("Error fetching tickets:", error);
         setIsError(true);
+        setErrorMessage("読み込みに失敗しました。");
         setIsLoading(false);
       }
     };
 
     fetchTickets();
-  }, []);
+  }, [location.search]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const id = params.get("id");
-    if (id) {
-      setGroupSearchTerm(id);
-      const filtered = tickets.filter((ticket) =>
-        ticket.OwnerId.toLowerCase().includes(id.toLowerCase())
-      );
-      setFilteredTickets(filtered);
-    }
-  }, [location.search, tickets]);
-
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const id = params.get("ticketid");
-    if (id) {
-      setGroupSearchTerm(id);
-      const filtered = tickets.filter((ticket) =>
-        ticket.TicketId.toLowerCase().includes(id.toLowerCase())
-      );
+    const ticketId = params.get("ticketid");
+    if (id || ticketId) {
+      setGroupSearchTerm(id || ticketId);
+      const filtered = tickets.filter((ticket) => {
+        const matchesOwnerId = id
+          ? ticket.OwnerId.toLowerCase().includes(id.toLowerCase())
+          : true;
+        const matchesTicketId = ticketId
+          ? ticket.TicketId.toLowerCase().includes(ticketId.toLowerCase())
+          : true;
+        return matchesOwnerId && matchesTicketId;
+      });
       setFilteredTickets(filtered);
     }
   }, [location.search, tickets]);
@@ -65,9 +70,21 @@ const TicketsPage = () => {
     setIsModalOpen(true);
   };
 
+  const handleDisableClick = (ticket) => {
+    setCurrentTicket(ticket);
+    setIsDisableModalOpen(true);
+  };
+
   const handleModalClose = () => {
-    setIsModalOpen(false);
-    setCurrentTicket(null);
+    if (isModalOpen) {
+      setIsModalOpen(false);
+      setCurrentTicket(null);
+    }
+    if (isDisableModalOpen) {
+      setDisableReason("");
+      setIsDisableModalOpen(false);
+      setCurrentTicket(null);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -78,6 +95,32 @@ const TicketsPage = () => {
   const handleSave = () => {
     // 保存処理をここに追加
     setIsModalOpen(false);
+  };
+
+  const handleDisable = async () => {
+    if (!disableReason) {
+      setIsModalInputError(true);
+    } else {
+      let response = await fetch(
+        "https://api.100ticket.soshosai.com/tickets/removeTicket",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ticketId: currentTicket.ticketId,
+            disableReason: disableReason,
+          }),
+        }
+      );
+      if (response.ok) {
+        setDisableReason("");
+        setIsDisableModalOpen(false);
+        setCurrentTicket(null);
+        setIsModalOpen(false);
+      }
+    }
   };
 
   const handleSearchChange = (e) => {
@@ -118,7 +161,7 @@ const TicketsPage = () => {
   }
 
   if (isError) {
-    return <div>Error loading tickets.</div>;
+    return <div>Error loading tickets. : {errorMessage}</div>;
   }
 
   return (
@@ -197,14 +240,17 @@ const TicketsPage = () => {
                   {ticket.IsUsed}
                 </td>
                 <td className="py-2 px-4 border border-gray-200 text-center">
-                  {ticket.TicketType}
-                </td>
-                <td className="py-2 px-4 border border-gray-200 text-center">
                   <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                    className="bg-blue-500 text-white px-4 py-2 my-1 rounded"
                     onClick={() => handleEditClick(ticket)}
                   >
                     編集
+                  </button>
+                  <button
+                    className="bg-red-500 text-white px-4 py-2 my-1 rounded"
+                    onClick={() => handleDisableClick(ticket)}
+                  >
+                    削除
                   </button>
                 </td>
               </tr>
@@ -264,16 +310,6 @@ const TicketsPage = () => {
                 className="border p-2"
               />
             </label>
-            <label className="block mb-2">
-              チケットタイプ:
-              <input
-                type="text"
-                name="TicketType"
-                value={currentTicket.TicketType}
-                onChange={handleInputChange}
-                className="border p-2 w-full"
-              />
-            </label>
             <div className="flex justify-end">
               <button
                 className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
@@ -286,6 +322,57 @@ const TicketsPage = () => {
                 onClick={handleSave}
               >
                 保存
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {isDisableModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-lg w-full max-w-md mx-auto">
+            <h2 className="text-xl font-bold mb-4 text-red-500">
+              チケットを削除しますか？
+            </h2>
+            <label className="block mb-2">チケットID:</label>
+            <label className="block mb-2 font-medium">
+              {currentTicket.TicketId}
+            </label>
+            <label className="block mb-2">発行場所:</label>
+            <label className="block mb-2 font-medium">
+              {currentTicket.IssuedPlace}
+            </label>
+            <label className="block mb-2">発行時刻:</label>
+            <label className="block mb-2 font-medium">
+              {currentTicket.IssuedTime}
+            </label>
+            <label className="block mb-2 font-bold">
+              チケットを無効化する理由を指定してください:
+              <input
+                type="text"
+                name="disableReason"
+                value={disableReason}
+                onChange={(e) => setDisableReason(e.target.value)}
+                className={`border p-2 w-full font-normal ${
+                  isModalInputError
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:ring-blue-500"
+                }`}
+              />
+            </label>
+            <div className="flex justify-end">
+              <button
+                className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
+                onClick={handleModalClose}
+              >
+                キャンセル
+              </button>
+              <button
+                className={`bg-red-500 text-white px-4 py-2 rounded ${
+                  disableReason == "" && "active:animate-shake"
+                }`}
+                onClick={handleDisable}
+              >
+                削除
               </button>
             </div>
           </div>
