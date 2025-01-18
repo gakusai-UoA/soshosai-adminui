@@ -40,7 +40,7 @@ const TicketsPage = () => {
         // IsDisabledがTRUEのものを除外。ただし、検索によってIDが指定されている場合は除外しない
         const filteredData = data.filter((ticket) => {
           if (
-            ticket.IsDisabled &&
+            ticket.IsDisabled == "TRUE" &&
             !(ticket.Id === id || ticket.TicketId === ticketId)
           ) {
             return false;
