@@ -33,8 +33,23 @@ const TicketsPage = () => {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        setTickets(data);
-        setFilteredTickets(data);
+        const params = new URLSearchParams(location.search);
+        const id = params.get("id");
+        const ticketId = params.get("ticketid");
+
+        // IsDisabledがTRUEのものを除外。ただし、検索によってIDが指定されている場合は除外しない
+        const filteredData = data.filter((ticket) => {
+          if (
+            ticket.IsDisabled &&
+            !(ticket.Id === id || ticket.TicketId === ticketId)
+          ) {
+            return false;
+          }
+          return true;
+        });
+
+        setTickets(filteredData);
+        setFilteredTickets(filteredData);
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching tickets:", error);
@@ -53,16 +68,6 @@ const TicketsPage = () => {
     const ticketId = params.get("ticketid");
     if (id || ticketId) {
       setGroupSearchTerm(id || ticketId);
-      const filtered = tickets.filter((ticket) => {
-        const matchesOwnerId = id
-          ? ticket.OwnerId.toLowerCase().includes(id.toLowerCase())
-          : true;
-        const matchesTicketId = ticketId
-          ? ticket.TicketId.toLowerCase().includes(ticketId.toLowerCase())
-          : true;
-        return matchesOwnerId && matchesTicketId;
-      });
-      setFilteredTickets(filtered);
     }
   }, [location.search, tickets]);
 
