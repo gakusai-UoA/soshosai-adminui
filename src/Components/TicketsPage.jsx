@@ -18,47 +18,47 @@ const TicketsPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        const response = await fetch(
-          "https://api.100ticket.soshosai.com/tickets/getTickets"
-        );
-        if (response.status === 429) {
-          setIsError(true);
-          setErrorMessage("読み込み回数の上限を突破しました。");
-          return;
-        }
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        const params = new URLSearchParams(location.search);
-        const id = params.get("id");
-        const ticketId = params.get("ticketid");
-
-        // IsDisabledがTRUEのものを除外。ただし、検索によってIDが指定されている場合は除外しない
-        const filteredData = data.filter((ticket) => {
-          if (
-            ticket.IsDisabled == "TRUE" &&
-            !(ticket.Id === id || ticket.TicketId === ticketId)
-          ) {
-            return false;
-          }
-          return true;
-        });
-
-        setTickets(filteredData);
-        setFilteredTickets(filteredData);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching tickets:", error);
+  const fetchTickets = async () => {
+    try {
+      const response = await fetch(
+        "https://api.100ticket.soshosai.com/tickets/getTickets"
+      );
+      if (response.status === 429) {
         setIsError(true);
-        setErrorMessage("読み込みに失敗しました。");
-        setIsLoading(false);
+        setErrorMessage("読み込み回数の上限を突破しました。");
+        return;
       }
-    };
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      const params = new URLSearchParams(location.search);
+      const id = params.get("id");
+      const ticketId = params.get("ticketid");
 
+      // IsDisabledがTRUEのものを除外。ただし、検索によってIDが指定されている場合は除外しない
+      const filteredData = data.filter((ticket) => {
+        if (
+          ticket.IsDisabled == "TRUE" &&
+          !(ticket.Id === id || ticket.TicketId === ticketId)
+        ) {
+          return false;
+        }
+        return true;
+      });
+
+      setTickets(filteredData);
+      setFilteredTickets(filteredData);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching tickets:", error);
+      setIsError(true);
+      setErrorMessage("読み込みに失敗しました。");
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchTickets();
   }, [location.search]);
 
@@ -126,6 +126,7 @@ const TicketsPage = () => {
         setIsDisableModalOpen(false);
         setCurrentTicket(null);
         setIsModalOpen(false);
+        fetchTickets();
       }
     }
   };
