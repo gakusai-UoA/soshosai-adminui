@@ -102,7 +102,7 @@ const TicketsPage = () => {
       setIsModalInputError(true);
     } else {
       let response = await fetch(
-        "https://api.100ticket.soshosai.com/tickets/removeTicket",
+        "https://api.100ticket.soshosai.com/tickets/disableTicket",
         {
           method: "PUT",
           headers: {
