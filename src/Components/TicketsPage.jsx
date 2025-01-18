@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const TicketsPage = () => {
   const [tickets, setTickets] = useState([]);
@@ -109,7 +110,7 @@ const TicketsPage = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            ticketId: currentTicket.ticketId,
+            ticketId: currentTicket.TicketId,
             disableReason: disableReason,
             staffId: Cookies.get("staffId"),
           }),
