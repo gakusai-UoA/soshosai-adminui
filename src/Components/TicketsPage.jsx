@@ -206,9 +206,6 @@ const TicketsPage = () => {
                 使用済み
               </th>
               <th className="py-2 px-4 border border-gray-200 text-center">
-                チケットタイプ
-              </th>
-              <th className="py-2 px-4 border border-gray-200 text-center">
                 編集
               </th>
             </tr>
