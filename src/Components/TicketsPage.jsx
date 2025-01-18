@@ -111,6 +111,7 @@ const TicketsPage = () => {
           body: JSON.stringify({
             ticketId: currentTicket.ticketId,
             disableReason: disableReason,
+            staffId: Cookies.get("staffId"),
           }),
         }
       );
