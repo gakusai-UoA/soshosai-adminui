@@ -32,9 +32,6 @@ const MainPage = () => {
 
         const membersByDate = data.reduce((acc, group) => {
           const date = group.EntranceTime.split("T")[0];
-          if(group.EntranceTime === "") {
-            date = "未入場";
-          }
           if (!acc[date]) {
             acc[date] = 0;
           }
@@ -121,7 +118,7 @@ const MainPage = () => {
                     {Object.entries(membersByDate).map(([date, count]) => (
                       <tr key={date}>
                         <td className="py-2 px-4 border border-gray-200 text-center">
-                          {date}
+                          {date || "未入場"}
                         </td>
                         <td className="py-2 px-4 border border-gray-200 text-center">
                           {count}
