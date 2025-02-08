@@ -4,12 +4,14 @@ import Nav from "./Components/Nav";
 import MainPage from "./Components/MainPage";
 import GroupsPage from "./Components/GroupsPage";
 import QRPage from "./Components/QRPage";
+import TicketsPage from "./Components/TicketsPage";
+
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { jwtVerify, createRemoteJWKSet } from "jose";
 
-const TEAM_DOMAIN = process.env.REACT_APP_TEAM_DOMAIN;
-const AUD = process.env.REACT_APP_POLICY_AUD;
+const TEAM_DOMAIN = process.env.REACT_APP_TEAM_DOMAIN || args.context.cloudflare.env.REACT_APP_TEAM_DOMAIN;
+const AUD = process.env.REACT_APP_POLICY_AUD || args.context.cloudflare.env.REACT_APP_POLICY_AUD;
 console.log(AUD)
 
 function App() {
