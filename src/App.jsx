@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import TicketsPage from "./Components/TicketsPage";
 import GroupsPage from "./Components/GroupsPage";
 import QRPage from "./Components/QRPage";
+import Cookies from "js-cookie";
 
 function App() {
   const [isAuthorized, setIsAuthorized] = useState(null);
@@ -14,9 +15,15 @@ function App() {
     const fetchHeader = async () => {
       try {
         const response = await fetch(window.location.href, { method: "HEAD" });
-        const cfEmail = response.headers.get(
-          "CF-Access-Authenticated-User-Email"
-        );
+        const jwt = response.headers.get("cf-access-jwt-assertion");
+        let cfEmail = null;
+        if (jwt) {
+          const parts = jwt.split(".");
+          if (parts.length >= 2) {
+            const payload = JSON.parse(atob(parts[1]));
+            cfEmail = payload.email;
+          }
+        }
         if (cfEmail && cfEmail.includes("soshosai.com")) {
           const staffId = cfEmail.split("@")[0];
           Cookies.set("staffId", staffId, { expires: 0.1 });
@@ -25,7 +32,7 @@ function App() {
           setIsAuthorized(false);
         }
       } catch (error) {
-        console.error("Error fetching header:", error);
+        console.error("Error fetching or decoding JWT:", error);
         setIsAuthorized(false);
       }
     };
