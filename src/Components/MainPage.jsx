@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import UserInfo from "./UserInfo";
 
 const MainPage = () => {
-  const [totalGroups, setTotalGroups] = useState(0);
   const [usedGroups, setUsedGroups] = useState(0);
   const [unusedGroups, setUnusedGroups] = useState(0);
   const [totalMembers, setTotalMembers] = useState(0);
@@ -25,7 +24,6 @@ const MainPage = () => {
           0
         );
         setTotalMembers(totalMembersCount);
-        setTotalGroups(totalMembersCount);
         const unUsedCount = data
           .filter((group) => group.EntranceTime === "")
           .reduce((sum, group) => sum + Number(group.MemberCount || 0), 0);
@@ -87,11 +85,11 @@ const MainPage = () => {
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
             <div className="border-4 border-dashed border-gray-200 rounded-lg p-4 bg-white">
+              <div className="p-4 bg-yellow-100 rounded-lg text-center">
+                <h2 className="text-2xl font-bold">入場者総計</h2>
+                <p className="text-4xl">{totalMembers}</p>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 bg-yellow-100 rounded-lg text-center">
-                  <h2 className="text-2xl font-bold">入場者総計</h2>
-                  <p className="text-4xl">{totalMembers}</p>
-                </div>
                 <div className="p-4 bg-green-100 rounded-lg text-center">
                   <h2 className="text-2xl font-bold">入場済み入場者数</h2>
                   <p className="text-4xl">{usedGroups}</p>
