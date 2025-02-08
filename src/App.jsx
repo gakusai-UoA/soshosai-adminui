@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes} from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Nav from "./Components/Nav";
 import MainPage from "./Components/MainPage";
@@ -15,11 +15,10 @@ function App() {
   const [isAuthorized, setIsAuthorized] = useState(null);
 
   useEffect(() => {
-    const fetchHeader = async () => {
+    const fetchCookieToken = async () => {
       try {
-        const response = await fetch(window.location.href, { method: "HEAD" });
-        const token = response.headers.get("cf-access-jwt-assertion");
-        console.log(token)
+        const token = Cookies.get("CF_Authorization");
+        console.log("Token from cookie:", token);
         let cfEmail = null;
         if (token) {
           const JWKS = createRemoteJWKSet(new URL(`${TEAM_DOMAIN}/cdn-cgi/access/certs`));
@@ -41,7 +40,7 @@ function App() {
         setIsAuthorized(false);
       }
     };
-    fetchHeader();
+    fetchCookieToken();
   }, []);
 
   if (isAuthorized === null) {
