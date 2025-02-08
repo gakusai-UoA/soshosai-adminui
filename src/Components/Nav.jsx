@@ -77,12 +77,14 @@ const Nav = () => {
                 >
                   ダッシュボード
                 </Link>
+                {/*
                 <Link
                   to="/tickets"
                   className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
                 >
                   チケット管理
                 </Link>
+                */}
                 <Link
                   to="/groups"
                   className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"

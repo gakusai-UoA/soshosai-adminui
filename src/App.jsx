@@ -18,7 +18,6 @@ function App() {
     const fetchCookieToken = async () => {
       try {
         const token = Cookies.get("CF_Authorization");
-        console.log("Token from cookie:", token);
         let cfEmail = null;
         if (token) {
           const JWKS = createRemoteJWKSet(
