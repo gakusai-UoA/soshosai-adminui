@@ -10,6 +10,7 @@ import { jwtVerify, createRemoteJWKSet } from "jose";
 
 const TEAM_DOMAIN = process.env.REACT_APP_TEAM_DOMAIN;
 const AUD = process.env.REACT_APP_POLICY_AUD;
+console.log(AUD)
 
 function App() {
   const [isAuthorized, setIsAuthorized] = useState(null);
@@ -21,7 +22,7 @@ function App() {
         console.log("Token from cookie:", token);
         let cfEmail = null;
         if (token) {
-          const JWKS = createRemoteJWKSet(new URL(`${TEAM_DOMAIN}/cdn-cgi/access/certs`));
+          const JWKS = createRemoteJWKSet(new URL(`https://soshosai.cloudflareaccess.com/cdn-cgi/access/certs`));
           const result = await jwtVerify(token, JWKS, {
             issuer: TEAM_DOMAIN,
             audience: AUD,
