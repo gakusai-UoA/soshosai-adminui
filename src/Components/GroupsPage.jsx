@@ -23,6 +23,10 @@ const GroupsPage = () => {
     const id = params.get("id");
     if (id) {
       setSearchTerm(id);
+      const filtered = groups.filter((group) =>
+        group.GroupId.toLowerCase().includes(id.toLowerCase())
+      );
+      setFilteredGroups(filtered);
     }
   }, [location.search, groups]);
 
@@ -113,6 +117,7 @@ const GroupsPage = () => {
 
   const handleGrepCancelClick = () => {
     setFilteredGroups(groups);
+    setSearchTerm("");
   };
 
   if (isLoading) {
