@@ -12,7 +12,6 @@ import { jwtVerify, createRemoteJWKSet } from "jose";
 
 const TEAM_DOMAIN = process.env.REACT_APP_TEAM_DOMAIN
 const AUD = process.env.REACT_APP_POLICY_AUD
-console.log(AUD,process,process.env)
 
 function App() {
   const [isAuthorized, setIsAuthorized] = useState(null);
