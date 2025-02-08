@@ -52,14 +52,12 @@ function App() {
             if (authority === "admin") {
               Cookies.set("staffId", staffId, { expires: 0.1 });
               Cookies.set("staffAuthority", authority, { expires: 0.1 });
-              setIsModalOpen(false);
             } else if (authority === "staff") {
               var inOneMinutes = new Date(new Date().getTime() + 1 * 60 * 1000);
               Cookies.set("staffId", staffId, { expires: inOneMinutes });
               Cookies.set("staffAuthority", authority, {
                 expires: inOneMinutes,
               });
-              setIsModalOpen(false);
             } else {
               setIsError(true);
               setErrorMessage("権限がありませんでした。");
