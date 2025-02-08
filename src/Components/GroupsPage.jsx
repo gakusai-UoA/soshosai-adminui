@@ -18,7 +18,6 @@ const GroupsPage = () => {
     direction: "ascending",
   });
 
-
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const id = params.get("id");
@@ -224,10 +223,7 @@ const GroupsPage = () => {
           <tbody>
             {filteredGroups.map((group) => (
               <tr key={group.GroupId}>
-                <td
-                  className="py-2 px-4 border border-gray-200 text-center cursor-pointer text-blue-500 underline"
-                  onClick={() => handleGroupIdClick(group.GroupId)}
-                >
+                <td className="py-2 px-4 border border-gray-200 text-center">
                   {group.GroupId}
                 </td>
                 <td className="py-2 px-4 border border-gray-200 text-center">
