@@ -11,6 +11,7 @@
     "tailwindcss": "npx tailwindcss -i ./src/App.css -o ./src/out.css --watch"
   },
   "dependencies": {
+    "jose": "^5.9.6",
     "js-cookie": "^3.0.5",
     "jsqr": "^1.4.0",
     "react": "^18.3.1",
