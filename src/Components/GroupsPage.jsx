@@ -24,7 +24,7 @@ const GroupsPage = () => {
     if (id) {
       setSearchTerm(id);
     }
-  }, [location.search, tickets]);
+  }, [location.search, groups]);
 
   const navigate = useNavigate();
 
