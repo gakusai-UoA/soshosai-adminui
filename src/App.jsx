@@ -78,7 +78,17 @@ function App() {
   }, []);
 
   if (isAuthorized === null) {
-    return <div>Loading...</div>;
+    return (
+      <div
+        className="flex justify-center items-center min-h-screen"
+        aria-label="読み込み中"
+      >
+        <div className="flex flex-col justify-center items-center">
+          <div className="animate-ping h-10 w-10 bg-gray-800 rounded-full m-5"></div>
+          <a className="text-3xl m-5">読み込み中...</a>
+        </div>
+      </div>
+    );
   }
 
   if (!isAuthorized) {
