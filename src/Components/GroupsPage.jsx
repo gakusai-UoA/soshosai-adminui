@@ -22,8 +22,7 @@ const GroupsPage = () => {
     const params = new URLSearchParams(location.search);
     const id = params.get("id");
     if (id) {
-      const filtered = groups.filter((group) => group.GroupId === id);
-      setFilteredGroups(filtered);
+      setSearchTerm(id);
     }
   }, [location.search, tickets]);
 
