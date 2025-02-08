@@ -2,36 +2,15 @@ import { useEffect, useState } from "react";
 import UserInfo from "./UserInfo";
 
 const MainPage = () => {
-  const [totalTickets, setTotalTickets] = useState(0);
-  const [usedTickets, setUsedTickets] = useState(0);
-  const [unusedTickets, setUnusedTickets] = useState(0);
+  const [totalGroups, setTotalGroups] = useState(0);
+  const [usedGroups, setUsedGroups] = useState(0);
+  const [unusedGroups, setUnusedGroups] = useState(0);
   const [totalMembers, setTotalMembers] = useState(0);
   const [membersByDate, setMembersByDate] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
   useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        const response = await fetch(
-          "https://api.100ticket.soshosai.com/tickets/getTickets"
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        setTotalTickets(data.length);
-        const usedCount = data.filter(
-          (ticket) => ticket.IsUsed === "TRUE"
-        ).length;
-        setUsedTickets(usedCount);
-        setUnusedTickets(data.length - usedCount);
-      } catch (error) {
-        console.error("Error fetching tickets:", error);
-        setIsError(true);
-      }
-    };
-
     const fetchGroups = async () => {
       try {
         const response = await fetch(
@@ -46,6 +25,12 @@ const MainPage = () => {
           0
         );
         setTotalMembers(totalMembersCount);
+        setTotalGroups(totalMembersCount);
+        const unUsedCount = data
+          .filter((group) => group.EntranceTime === "")
+          .reduce((sum, group) => sum + Number(group.MemberCount || 0), 0);
+        setUnusedGroups(unUsedCount);
+        setUsedGroups(totalMembersCount - unUsedCount);
 
         const membersByDate = data.reduce((acc, group) => {
           const date = group.EntranceTime.split("T")[0];
@@ -64,7 +49,7 @@ const MainPage = () => {
 
     const fetchData = async () => {
       setIsLoading(true);
-      await Promise.all([fetchTickets(), fetchGroups()]);
+      await Promise.all([fetchGroups(), fetchGroups()]);
       setIsLoading(false);
     };
 
@@ -102,26 +87,22 @@ const MainPage = () => {
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
             <div className="border-4 border-dashed border-gray-200 rounded-lg p-4 bg-white">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-4 bg-blue-100 rounded-lg text-center">
-                  <h2 className="text-2xl font-bold">総チケット数</h2>
-                  <p className="text-4xl">{totalTickets}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 bg-yellow-100 rounded-lg text-center">
+                  <h2 className="text-2xl font-bold">入場者総計</h2>
+                  <p className="text-4xl">{totalMembers}</p>
                 </div>
                 <div className="p-4 bg-green-100 rounded-lg text-center">
-                  <h2 className="text-2xl font-bold">使用済みチケット数</h2>
-                  <p className="text-4xl">{usedTickets}</p>
+                  <h2 className="text-2xl font-bold">入場済み入場者数</h2>
+                  <p className="text-4xl">{usedGroups}</p>
                 </div>
                 <div className="p-4 bg-red-100 rounded-lg text-center">
-                  <h2 className="text-2xl font-bold">未使用チケット数</h2>
-                  <p className="text-4xl">{unusedTickets}</p>
+                  <h2 className="text-2xl font-bold">未入場入場者数</h2>
+                  <p className="text-4xl">{unusedGroups}</p>
                 </div>
               </div>
             </div>
             <div className="border-4 border-dashed border-gray-200 rounded-lg p-4 bg-white mt-8">
-              <div className="p-4 bg-yellow-100 rounded-lg text-center">
-                <h2 className="text-2xl font-bold">入場者総計</h2>
-                <p className="text-4xl">{totalMembers}</p>
-              </div>
               <div className="mt-8">
                 <h2 className="text-2xl font-bold mb-4">日付ごとの入場者数</h2>
                 <table className="min-w-full bg-white border-collapse border border-gray-200">
