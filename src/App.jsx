@@ -10,9 +10,9 @@ import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { jwtVerify, createRemoteJWKSet } from "jose";
 
-const TEAM_DOMAIN = process.env.REACT_APP_TEAM_DOMAIN || env.RREACT_APP_TEAM_DOMAIN;
-const AUD = process.env.REACT_APP_POLICY_AUD || env.RREACT_APP_POLICY_AUD;
-console.log(AUD)
+const TEAM_DOMAIN = process.env.REACT_APP_TEAM_DOMAIN
+const AUD = process.env.REACT_APP_POLICY_AUD
+console.log(AUD,process,process.env)
 
 function App() {
   const [isAuthorized, setIsAuthorized] = useState(null);
