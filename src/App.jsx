@@ -10,8 +10,8 @@ import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { jwtVerify, createRemoteJWKSet } from "jose";
 
-const TEAM_DOMAIN = process.env.REACT_APP_TEAM_DOMAIN || args.context.cloudflare.env.REACT_APP_TEAM_DOMAIN;
-const AUD = process.env.REACT_APP_POLICY_AUD || args.context.cloudflare.env.REACT_APP_POLICY_AUD;
+const TEAM_DOMAIN = process.env.REACT_APP_TEAM_DOMAIN || context.cloudflare.env.REACT_APP_TEAM_DOMAIN;
+const AUD = process.env.REACT_APP_POLICY_AUD || context.cloudflare.env.REACT_APP_POLICY_AUD;
 console.log(AUD)
 
 function App() {
