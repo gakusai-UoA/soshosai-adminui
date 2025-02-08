@@ -5,7 +5,6 @@ import MainPage from "./Components/MainPage";
 import GroupsPage from "./Components/GroupsPage";
 import QRPage from "./Components/QRPage";
 import TicketsPage from "./Components/TicketsPage";
-
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { jwtVerify, createRemoteJWKSet } from "jose";
@@ -67,7 +66,6 @@ function App() {
           <Route path="/tickets" element={<TicketsPage />} />
           <Route path="/groups" element={<GroupsPage />} />
           <Route path="/qr" element={<QRPage />} />
-          <Route path="/auth" element={<Auth />} />
         </Routes>
       </div>
     </BrowserRouter>
