@@ -17,7 +17,6 @@ const GroupsPage = () => {
     key: null,
     direction: "ascending",
   });
-  const navigate = useNavigate();
 
 
   useEffect(() => {
