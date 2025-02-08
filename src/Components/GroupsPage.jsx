@@ -17,6 +17,8 @@ const GroupsPage = () => {
     key: null,
     direction: "ascending",
   });
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -118,6 +120,7 @@ const GroupsPage = () => {
   const handleGrepCancelClick = () => {
     setFilteredGroups(groups);
     setSearchTerm("");
+    navigate(`/groups`);
   };
 
   if (isLoading) {
