@@ -47,14 +47,22 @@ const QRPage = () => {
       if (ctx) {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const qrCodeData = jsQR(imageData.data, imageData.width, imageData.height);
+        const qrCodeData = jsQR(
+          imageData.data,
+          imageData.width,
+          imageData.height
+        );
         if (qrCodeData) {
           const qrText = qrCodeData.data;
-          if (qrText.length === 37 && (qrText.startsWith("g") || qrText.startsWith("t"))) {
+          if (
+            qrText.length === 37 &&
+            (qrText.startsWith("g") || qrText.startsWith("t"))
+          ) {
             if (qrText.startsWith("t")) {
-              navigate(`/tickets?ticketid=${qrText}`);
+              //navigate(`/tickets?ticketid=${qrText}`);
+              setQrError("無効なQRコードです");
             } else if (qrText.startsWith("g")) {
-              navigate(`/tickets?id=${qrText}`);
+              navigate(`/groups?id=${qrText}`);
             }
           } else {
             setQrError("無効なQRコードです");

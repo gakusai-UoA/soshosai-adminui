@@ -4,13 +4,12 @@ import Nav from "./Components/Nav";
 import MainPage from "./Components/MainPage";
 import GroupsPage from "./Components/GroupsPage";
 import QRPage from "./Components/QRPage";
-import TicketsPage from "./Components/TicketsPage";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { jwtVerify, createRemoteJWKSet } from "jose";
 
-const TEAM_DOMAIN = process.env.REACT_APP_TEAM_DOMAIN
-const AUD = process.env.REACT_APP_POLICY_AUD
+const TEAM_DOMAIN = process.env.REACT_APP_TEAM_DOMAIN;
+const AUD = process.env.REACT_APP_POLICY_AUD;
 
 function App() {
   const [isAuthorized, setIsAuthorized] = useState(null);
@@ -22,7 +21,11 @@ function App() {
         console.log("Token from cookie:", token);
         let cfEmail = null;
         if (token) {
-          const JWKS = createRemoteJWKSet(new URL(`https://soshosai.cloudflareaccess.com/cdn-cgi/access/certs`));
+          const JWKS = createRemoteJWKSet(
+            new URL(
+              `https://soshosai.cloudflareaccess.com/cdn-cgi/access/certs`
+            )
+          );
           const result = await jwtVerify(token, JWKS, {
             issuer: TEAM_DOMAIN,
             audience: AUD,
@@ -31,7 +34,40 @@ function App() {
         }
         if (cfEmail && cfEmail.includes("soshosai.com")) {
           const staffId = cfEmail.split("@")[0];
-          Cookies.set("staffId", staffId, { expires: 0.1 });
+          const response = await fetch(
+            "https://api.100ticket.soshosai.com/staffs/staffLogin",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                staffId: staffId,
+              }),
+            }
+          );
+          if (response.ok) {
+            const data = await response.json();
+            let authority = data.Authority;
+            if (authority === "admin") {
+              Cookies.set("staffId", staffId, { expires: 0.1 });
+              Cookies.set("staffAuthority", authority, { expires: 0.1 });
+              setIsModalOpen(false);
+            } else if (authority === "staff") {
+              var inOneMinutes = new Date(new Date().getTime() + 1 * 60 * 1000);
+              Cookies.set("staffId", staffId, { expires: inOneMinutes });
+              Cookies.set("staffAuthority", authority, {
+                expires: inOneMinutes,
+              });
+              setIsModalOpen(false);
+            } else {
+              setIsError(true);
+              setErrorMessage("権限がありませんでした。");
+            }
+          } else {
+            setIsError(true);
+            setErrorMessage("ログインができませんでした。");
+          }
           setIsAuthorized(true);
         } else {
           setIsAuthorized(false);
@@ -63,7 +99,7 @@ function App() {
         <Nav />
         <Routes>
           <Route path="/" element={<MainPage />} />
-          <Route path="/tickets" element={<TicketsPage />} />
+          {/*<Route path="/tickets" element={<TicketsPage />} />*/}
           <Route path="/groups" element={<GroupsPage />} />
           <Route path="/qr" element={<QRPage />} />
         </Routes>

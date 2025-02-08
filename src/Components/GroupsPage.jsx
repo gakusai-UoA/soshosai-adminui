@@ -90,7 +90,7 @@ const GroupsPage = () => {
   };
 
   const handleGroupIdClick = (groupId) => {
-    navigate(`/tickets?id=${groupId}`);
+    //navigate(`/tickets?id=${groupId}`);
   };
 
   if (isLoading) {
