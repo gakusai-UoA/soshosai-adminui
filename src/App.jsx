@@ -7,6 +7,7 @@ import QRPage from "./Components/QRPage";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { jwtVerify, createRemoteJWKSet } from "jose";
+import AboutYou from "./Components/AboutYou";
 
 const TEAM_DOMAIN = process.env.REACT_APP_TEAM_DOMAIN;
 const AUD = process.env.REACT_APP_POLICY_AUD;
@@ -48,20 +49,24 @@ function App() {
           if (response.ok) {
             const data = await response.json();
             let authority = data.Authority;
+            // 共通のCookie設定用の有効期限
+            let expiresOption;
             if (authority === "admin") {
-              Cookies.set("staffId", staffId, { expires: 0.1 });
-              Cookies.set("staffAuthority", authority, { expires: 0.1 });
+              expiresOption = { expires: 0.1 };
             } else if (authority === "staff") {
-              var inOneMinutes = new Date(new Date().getTime() + 1 * 60 * 1000);
-              Cookies.set("staffId", staffId, { expires: inOneMinutes });
-              Cookies.set("staffAuthority", authority, {
-                expires: inOneMinutes,
-              });
-            } else {
-              setIsError(true);
-              setErrorMessage("権限がありませんでした。");
+              const inOneMinutes = new Date(
+                new Date().getTime() + 1 * 60 * 1000
+              );
+              expiresOption = { expires: inOneMinutes };
             }
+            // 必要な情報をCookieにセット
+            Cookies.set("staffId", staffId, expiresOption);
+            Cookies.set("staffAuthority", authority, expiresOption);
+            Cookies.set("staffName", data.StaffName, expiresOption);
+            Cookies.set("staffDepartment", data.StaffDepartment, expiresOption);
+            Cookies.set("cfEmail", cfEmail, expiresOption);
           } else {
+            // エラー処理（必要に応じて実装）
             setIsError(true);
             setErrorMessage("ログインができませんでした。");
           }
@@ -106,9 +111,9 @@ function App() {
         <Nav />
         <Routes>
           <Route path="/" element={<MainPage />} />
-          {/*<Route path="/tickets" element={<TicketsPage />} />*/}
           <Route path="/groups" element={<GroupsPage />} />
           <Route path="/qr" element={<QRPage />} />
+          <Route path="/aboutyou" element={<AboutYou />} />
         </Routes>
       </div>
     </BrowserRouter>
