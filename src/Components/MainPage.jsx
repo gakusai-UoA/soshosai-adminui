@@ -85,7 +85,7 @@ const MainPage = () => {
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
             <div className="border-4 border-dashed border-gray-200 rounded-lg p-4 bg-white">
-              <div className="p-4 bg-yellow-100 rounded-lg text-center">
+              <div className="p-4 bg-yellow-100 rounded-lg text-center mb-8">
                 <h2 className="text-2xl font-bold">入場者総計</h2>
                 <p className="text-4xl">{totalMembers}</p>
               </div>
