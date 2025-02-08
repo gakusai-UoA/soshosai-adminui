@@ -1,12 +1,15 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes} from "react-router-dom";
 import "./App.css";
 import Nav from "./Components/Nav";
 import MainPage from "./Components/MainPage";
-import { useEffect, useState } from "react";
-import TicketsPage from "./Components/TicketsPage";
 import GroupsPage from "./Components/GroupsPage";
 import QRPage from "./Components/QRPage";
 import Cookies from "js-cookie";
+import { useEffect, useState } from "react";
+import { jwtVerify, createRemoteJWKSet } from "jose";
+
+const TEAM_DOMAIN = process.env.REACT_APP_TEAM_DOMAIN;
+const AUD = process.env.REACT_APP_POLICY_AUD;
 
 function App() {
   const [isAuthorized, setIsAuthorized] = useState(null);
@@ -15,15 +18,15 @@ function App() {
     const fetchHeader = async () => {
       try {
         const response = await fetch(window.location.href, { method: "HEAD" });
-        const jwt = response.headers.get("cf-access-jwt-assertion");
-        console.log(jwt, response.headers);
+        const token = response.headers.get("cf-access-jwt-assertion");
         let cfEmail = null;
-        if (jwt) {
-          const parts = jwt.split(".");
-          if (parts.length >= 2) {
-            const payload = JSON.parse(atob(parts[1]));
-            cfEmail = payload.email;
-          }
+        if (token) {
+          const JWKS = createRemoteJWKSet(new URL(`${TEAM_DOMAIN}/cdn-cgi/access/certs`));
+          const result = await jwtVerify(token, JWKS, {
+            issuer: TEAM_DOMAIN,
+            audience: AUD,
+          });
+          cfEmail = result.payload.email;
         }
         if (cfEmail && cfEmail.includes("soshosai.com")) {
           const staffId = cfEmail.split("@")[0];
@@ -33,7 +36,7 @@ function App() {
           setIsAuthorized(false);
         }
       } catch (error) {
-        console.error("Error fetching or decoding JWT:", error);
+        console.error("Error verifying JWT:", error);
         setIsAuthorized(false);
       }
     };
