@@ -19,6 +19,7 @@ function App() {
       try {
         const response = await fetch(window.location.href, { method: "HEAD" });
         const token = response.headers.get("cf-access-jwt-assertion");
+        console.log(token)
         let cfEmail = null;
         if (token) {
           const JWKS = createRemoteJWKSet(new URL(`${TEAM_DOMAIN}/cdn-cgi/access/certs`));
