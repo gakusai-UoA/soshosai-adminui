@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import UserInfo from "./UserInfo";
 
 const MainPage = () => {
   const [totalTickets, setTotalTickets] = useState(0);
@@ -151,6 +152,7 @@ const MainPage = () => {
             </div>
           </div>
         </div>
+        <UserInfo />
       </main>
     </div>
   );
