@@ -32,6 +32,9 @@ const MainPage = () => {
 
         const membersByDate = data.reduce((acc, group) => {
           const date = group.EntranceTime.split("T")[0];
+          if(group.EntranceTime === "") {
+            date = "未入場";
+          }
           if (!acc[date]) {
             acc[date] = 0;
           }
