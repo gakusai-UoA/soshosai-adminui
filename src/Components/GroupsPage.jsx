@@ -93,6 +93,20 @@ const GroupsPage = () => {
     //navigate(`/tickets?id=${groupId}`);
   };
 
+  const handleGrepByEnteredClick = () => {
+    const filtered = groups.filter((group) => group.EntranceTime !== "");
+    setFilteredGroups(filtered);
+  };
+
+  const handleGrepByNotEnteredClick = () => {
+    const filtered = groups.filter((group) => group.EntranceTime === "");
+    setFilteredGroups(filtered);
+  };
+
+  const handleGrepCancelClick = () => {
+    setFilteredGroups(groups);
+  };
+
   if (isLoading) {
     return (
       <div
@@ -114,7 +128,7 @@ const GroupsPage = () => {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4 text-center">Groups</h1>
-      <div className="mb-4">
+      <div className="mb-4 flex flex-row">
         <input
           type="text"
           placeholder="グループIDで検索"
@@ -122,6 +136,28 @@ const GroupsPage = () => {
           onChange={handleSearchChange}
           className="border p-2 w-full"
         />
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded w-36 ml-5"
+          onClick={() => handleGrepByEnteredClick()}
+        >
+          入場済みで
+          <br />
+          絞り込み
+        </button>
+        <button
+          className="bg-red-500 text-white px-4 py-2 rounded w-36 ml-5"
+          onClick={() => handleGrepByNotEnteredClick()}
+        >
+          未入場で
+          <br />
+          絞り込み
+        </button>
+        <button
+          className="bg-green-500 text-white px-4 py-2 rounded w-36 ml-5"
+          onClick={() => handleGrepCancelClick()}
+        >
+          絞り込みを解除
+        </button>
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border-collapse border border-gray-200">
