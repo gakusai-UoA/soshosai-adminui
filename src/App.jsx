@@ -16,6 +16,7 @@ function App() {
       try {
         const response = await fetch(window.location.href, { method: "HEAD" });
         const jwt = response.headers.get("cf-access-jwt-assertion");
+        console.log(jwt, response.headers);
         let cfEmail = null;
         if (jwt) {
           const parts = jwt.split(".");
