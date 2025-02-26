@@ -10,10 +10,10 @@ import { jwtVerify, createRemoteJWKSet } from "jose";
 import AboutYou from "./Components/AboutYou";
 
 function App() {
-  try {
-    const TEAM_DOMAIN = process.env.REACT_APP_TEAM_DOMAIN;
-    const AUD = process.env.REACT_APP_POLICY_AUD;
-  } catch (error) {
+  //try {
+  const TEAM_DOMAIN = process.env.REACT_APP_TEAM_DOMAIN;
+  const AUD = process.env.REACT_APP_POLICY_AUD;
+  /*} catch (error) {
     Cookies.set("staffId", "admin", { expires: 0.1 });
     Cookies.set("staffAuthority", "admin", { expires: 0.1 });
     Cookies.set("staffName", "admin", { expires: 0.1 });
@@ -33,17 +33,8 @@ function App() {
       </BrowserRouter>
     );
   }
+    */
   const [isAuthorized, setIsAuthorized] = useState(null);
-  useEffect(() => {
-    const canvas = document.getElementById("canvas");
-    const canvasContext = canvas.getContext("2d");
-    const img = new Image();
-    img.src = "./logo.png";
-    img.onload = () => {
-      canvasContext.drawImage(img, 0, 0);
-    };
-    setContext(canvasContext);
-  }, []);
 
   useEffect(() => {
     const fetchCookieToken = async () => {
