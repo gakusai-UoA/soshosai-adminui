@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import Cookies from "js-cookie";
 
+const API_BASE_URL = "https://fwd.soshosai.com";
+
 function ProjectsPage() {
   const [projects, setProjects] = useState([]);
   const [newProject, setNewProject] = useState({
@@ -43,13 +45,86 @@ function ProjectsPage() {
 
   const fetchProjects = async () => {
     try {
-      const response = await fetch("https://fwd.soshosai.com/projects");
+      const response = await fetch(`${API_BASE_URL}/projects`);
       if (response.ok) {
         const data = await response.json();
+        console.log('Fetched projects:', data);
         const accessibleProjects = data.filter(userHasAccess);
         setProjects(accessibleProjects);
       } else {
         setError("プロジェクトの取得に失敗しました");
+      }
+    } catch (error) {
+      setError("サーバーとの通信に失敗しました");
+    }
+  };
+
+  const handleCreateProject = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`${API_BASE_URL}/projects/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          projectName: newProject.projectName,
+          destinationUrl: newProject.destinationUrl,
+          adminUser: newProject.adminUser,
+        }),
+      });
+      if (response.ok) {
+        setNewProject({ 
+          projectName: "", 
+          destinationUrl: "",
+          adminUser: Cookies.get("staffId")
+        });
+        fetchProjects();
+      } else {
+        setError("プロジェクトの作成に失敗しました");
+      }
+    } catch (error) {
+      setError("サーバーとの通信に失敗しました");
+    }
+  };
+
+  const handleUpdateProject = async (e) => {
+    e.preventDefault();
+    if (!editingProject) return;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/projects/${editingProject.project_id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          projectName: editingProject.name,
+          destinationUrl: editingProject.destination_url,
+        }),
+      });
+      if (response.ok) {
+        setEditingProject(null);
+        fetchProjects();
+      } else {
+        setError("プロジェクトの更新に失敗しました");
+      }
+    } catch (error) {
+      setError("サーバーとの通信に失敗しました");
+    }
+  };
+
+  const handleDeleteProject = async (projectId) => {
+    if (!window.confirm("このプロジェクトを削除してもよろしいですか？")) return;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/projects/${projectId}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        fetchProjects();
+      } else {
+        setError("プロジェクトの削除に失敗しました");
       }
     } catch (error) {
       setError("サーバーとの通信に失敗しました");
@@ -161,16 +236,13 @@ function ProjectsPage() {
       const qrCodes = [];
       
       for (let i = 0; i < quantity; i++) {
-        const response = await fetch(
-          "https://fwd.soshosai.com/projects/createQRCode",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ projectId: selectedProject.project_id }),
-          }
-        );
+        const response = await fetch(`${API_BASE_URL}/projects/createQRCode`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ projectId: selectedProject.project_id }),
+        });
 
         if (!response.ok) {
           throw new Error("QRコードの生成に失敗しました");
@@ -226,8 +298,6 @@ function ProjectsPage() {
     setIsPrinting(false);
   };
 
-  // ... Other handlers (handleCreateProject, handleDeleteProject, handleUpdateProject) remain the same
-
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">プロジェクト管理</h1>
@@ -238,7 +308,45 @@ function ProjectsPage() {
         </div>
       )}
 
-      {/* Project creation form remains the same */}
+      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <h2 className="text-xl font-semibold mb-4">新規プロジェクト作成</h2>
+        <form onSubmit={handleCreateProject}>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              プロジェクト名
+            </label>
+            <input
+              type="text"
+              value={newProject.projectName}
+              onChange={(e) =>
+                setNewProject({ ...newProject, projectName: e.target.value })
+              }
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              リダイレクト先URL
+            </label>
+            <input
+              type="url"
+              value={newProject.destinationUrl}
+              onChange={(e) =>
+                setNewProject({ ...newProject, destinationUrl: e.target.value })
+              }
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            作成
+          </button>
+        </form>
+      </div>
 
       <div className="bg-white shadow-md rounded px-8 pt-6 pb-8">
         <h2 className="text-xl font-semibold mb-4">プロジェクト一覧</h2>
