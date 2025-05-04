@@ -162,7 +162,7 @@ function ProjectsPage() {
       
       for (let i = 0; i < quantity; i++) {
         const response = await fetch(
-          "https://api.100ticket.soshosai.com/projects/createQRCode",
+          "https://fwd.soshosai.com/projects/createQRCode",
           {
             method: "POST",
             headers: {
