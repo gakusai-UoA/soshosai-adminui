@@ -469,23 +469,55 @@ function ProjectsPage() {
                       {isPrinting ? "生成中..." : "QRコードを生成"}
                     </button>
                   ) : (
-                    <>
+                    <div className="space-y-4">
                       <div className="border rounded-md p-4">
-                        <p className="text-sm font-medium">生成されたQRコード: {generatedQRs.length}枚</p>
-                        <ul className="mt-2 text-sm text-gray-600 space-y-1">
-                          {generatedQRs.map((qr) => (
-                            <li key={qr.qrId}>ID: {qr.qrId}</li>
-                          ))}
-                        </ul>
+                        <p className="text-sm font-medium mb-2">生成されたQRコード: {generatedQRs.length}枚</p>
+                        <div className="max-h-48 overflow-y-auto">
+                          <ul className="space-y-2">
+                            {generatedQRs.map((qr) => (
+                              <li key={qr.qrId} className="flex items-center justify-between text-sm border-b pb-2">
+                                <div>
+                                  <div>ID: {qr.qrId}</div>
+                                  <div className="text-gray-600 text-xs">
+                                    {qr.url}
+                                  </div>
+                                </div>
+                                <button
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(qr.url);
+                                    setError("URLをコピーしました");
+                                    setTimeout(() => setError(""), 2000);
+                                  }}
+                                  className="text-blue-500 hover:text-blue-700"
+                                >
+                                  URLをコピー
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                       </div>
+                      {isConnected ? (
+                        <button
+                          onClick={handlePrintQRs}
+                          disabled={isPrinting}
+                          className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                        >
+                          {isPrinting ? "印刷中..." : "QRコードを印刷"}
+                        </button>
+                      ) : (
+                        <div className="text-center text-sm text-gray-600">
+                          QRコードを印刷するにはプリンターを接続してください
+                        </div>
+                      )}
                       <button
-                        onClick={handlePrintQRs}
+                        onClick={handleGenerateQRs}
                         disabled={isPrinting}
-                        className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                        className="w-full bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
                       >
-                        {isPrinting ? "印刷中..." : "印刷する"}
+                        {isPrinting ? "生成中..." : "追加で生成"}
                       </button>
-                    </>
+                    </div>
                   )}
                 </div>
               )}
