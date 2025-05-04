@@ -394,13 +394,13 @@ function ProjectsPage() {
                       )}
                     </div>
                     <button
-                      onClick={() => handleDeleteProject(project.id)}
+                      onClick={() => handleDeleteProject(project.projectId)}
                       className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded mr-2"
                     >
                       削除
                     </button>
                     <a
-                      href={`/analytics/${project.id}`}
+                      href={`/analytics/${project.projectId}`}
                       className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded inline-block"
                     >
                       分析
