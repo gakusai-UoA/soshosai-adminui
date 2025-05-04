@@ -193,7 +193,7 @@ function ProjectsPage() {
             }
 
             setIsPrinting(true);
-            const response = await fetch('https://api.100ticket.soshosai.com/projects/createQRCode', {
+            const response = await fetch('https:/fwd.soshosai.com/projects/createQRCode', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
