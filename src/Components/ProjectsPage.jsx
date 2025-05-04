@@ -241,7 +241,7 @@ function ProjectsPage() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ projectId: selectedProject.project_id }),
+          body: JSON.stringify({ projectId: selectedProject.projectId }),
         });
 
         if (!response.ok) {
@@ -272,7 +272,7 @@ function ProjectsPage() {
     try {
       setIsPrinting(true);
       for (const qr of generatedQRs) {
-        await print(qr.url, selectedProject.project_id, qr.qrId);
+        await print(qr.url, selectedProject.projectId, qr.qrId);
       }
     } catch (error) {
       setError(error.message);
