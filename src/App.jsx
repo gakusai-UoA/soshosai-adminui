@@ -8,6 +8,8 @@ import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { jwtVerify, createRemoteJWKSet } from "jose";
 import AboutYou from "./Components/AboutYou";
+import ProjectsPage from "./Components/ProjectsPage";
+import ProjectAnalytics from "./Components/ProjectAnalytics";
 
 function App() {
   //try {
@@ -27,7 +29,9 @@ function App() {
             <Route path="/" element={<MainPage />} />
             <Route path="/groups" element={<GroupsPage />} />
             <Route path="/qr" element={<QRPage />} />
-            <Route path="/aboutyou" element={<AboutYou />} />
+            <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/analytics/:id" element={<ProjectAnalytics />} />
+          <Route path="/aboutyou" element={<AboutYou />} />
           </Routes>
         </div>
       </BrowserRouter>
@@ -134,6 +138,8 @@ function App() {
           <Route path="/" element={<MainPage />} />
           <Route path="/groups" element={<GroupsPage />} />
           <Route path="/qr" element={<QRPage />} />
+          <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/analytics/:id" element={<ProjectAnalytics />} />
           <Route path="/aboutyou" element={<AboutYou />} />
         </Routes>
       </div>
