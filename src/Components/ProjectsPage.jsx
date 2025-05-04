@@ -27,7 +27,7 @@ function ProjectsPage() {
   const fetchProjects = async () => {
     try {
       const response = await fetch(
-        "https://api.100ticket.soshosai.com/projects"
+        "https://fwd.soshosai.com/projects"
       );
       if (response.ok) {
         const data = await response.json();
@@ -46,7 +46,7 @@ function ProjectsPage() {
     e.preventDefault();
     try {
       const response = await fetch(
-        "https://api.100ticket.soshosai.com/projects/create",
+        "https://fwd.soshosai.com/projects/create",
         {
           method: "POST",
           headers: {
@@ -75,7 +75,7 @@ function ProjectsPage() {
 
     try {
       const response = await fetch(
-        `https://api.100ticket.soshosai.com/projects/${projectId}`,
+        `https://fwd.soshosai.com/projects/${projectId}`,
         {
           method: "DELETE",
         }
@@ -96,7 +96,7 @@ function ProjectsPage() {
 
     try {
       const response = await fetch(
-        `https://api.100ticket.soshosai.com/projects/${editingProject.id}`,
+        `https://fwd.soshosai.com/projects/${editingProject.id}`,
         {
           method: "PUT",
           headers: {
