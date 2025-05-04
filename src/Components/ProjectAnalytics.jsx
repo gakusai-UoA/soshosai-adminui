@@ -30,7 +30,7 @@ function ProjectAnalytics() {
     const fetchProjectData = async () => {
         try {
             // プロジェクト情報の取得
-            const projectResponse = await fetch(`https://api.100ticket.soshosai.com/projects/${id}`);
+            const projectResponse = await fetch(`https://fwd.soshosai.com/projects/${id}`);
             if (!projectResponse.ok) throw new Error('プロジェクトの取得に失敗しました');
             const projectData = await projectResponse.json();
             
@@ -42,7 +42,7 @@ function ProjectAnalytics() {
             setHasAccess(true);
 
             // アクセスログの取得
-            const logsResponse = await fetch(`https://api.100ticket.soshosai.com/projects/${id}/getAccessLogs`);
+            const logsResponse = await fetch(`https://fwd.soshosai.com/projects/${id}/getAccessLogs`);
             if (!logsResponse.ok) throw new Error('アクセスログの取得に失敗しました');
             const logsData = await logsResponse.json();
             setAccessLogs(logsData);
