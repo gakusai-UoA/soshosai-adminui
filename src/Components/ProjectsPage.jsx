@@ -47,8 +47,10 @@ function ProjectsPage() {
       const response = await fetch("https://fwd.soshosai.com/projects");
       if (response.ok) {
         const data = await response.json();
+        console.log('Fetched projects data:', data);
         // フィルタリング：アクセス権のあるプロジェクトのみを表示
         const accessibleProjects = data.filter(userHasAccess);
+        console.log('Accessible projects:', accessibleProjects);
         setProjects(accessibleProjects);
       } else {
         setError("プロジェクトの取得に失敗しました");
