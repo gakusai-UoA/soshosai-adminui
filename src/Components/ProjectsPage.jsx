@@ -9,27 +9,31 @@ function ProjectsPage() {
     adminUser: Cookies.get("staffId"),
   });
   const [editingProject, setEditingProject] = useState(null);
-    const [error, setError] = useState("");
-    const [ipAddress, setIpAddress] = useState(Cookies.get("ipAddress") || "192.168.100.30");
-    const [printerPort, setPrinterPort] = useState(Cookies.get("printerPort") || "8008");
-    const [isConnecting, setIsConnecting] = useState(false);
-    const [isConnected, setIsConnected] = useState(false);
-    const [isPrinting, setIsPrinting] = useState(false);
-    const ePosDevice = useRef();
-    const printer = useRef();
+  const [error, setError] = useState("");
+  const [ipAddress, setIpAddress] = useState(
+    Cookies.get("ipAddress") || "192.168.100.30"
+  );
+  const [printerPort, setPrinterPort] = useState(
+    Cookies.get("printerPort") || "8008"
+  );
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(false);
+  const ePosDevice = useRef();
+  const printer = useRef();
 
-    useEffect(() => {
-        fetchProjects();
-    }, []);
+  useEffect(() => {
+    fetchProjects();
+  }, []);
 
-    useEffect(() => {
-        // Check if ePOS SDK is available
-        if (!window.epson || !window.epson.ePOSDevice) {
-            setError('ePOSプリンターSDKの読み込みに失敗しました');
-        }
-    }, []);
+  useEffect(() => {
+    // Check if ePOS SDK is available
+    if (!window.epson || !window.epson.ePOSDevice) {
+      setError("ePOSプリンターSDKの読み込みに失敗しました");
+    }
+  }, []);
 
-    const userHasAccess = (project) => {
+  const userHasAccess = (project) => {
     const currentUserId = Cookies.get("staffId");
     return (
       project.adminUserId === null ||
@@ -40,9 +44,7 @@ function ProjectsPage() {
 
   const fetchProjects = async () => {
     try {
-      const response = await fetch(
-        "https://fwd.soshosai.com/projects"
-      );
+      const response = await fetch("https://fwd.soshosai.com/projects");
       if (response.ok) {
         const data = await response.json();
         // フィルタリング：アクセス権のあるプロジェクトのみを表示
@@ -59,20 +61,17 @@ function ProjectsPage() {
   const handleCreateProject = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(
-        "https://fwd.soshosai.com/projects/create",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            projectName: newProject.projectName,
-            destinationUrl: newProject.destinationUrl,
-            adminUser: newProject.adminUser,
-          }),
-        }
-      );
+      const response = await fetch("https://fwd.soshosai.com/projects/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          projectName: newProject.projectName,
+          destinationUrl: newProject.destinationUrl,
+          adminUser: newProject.adminUser,
+        }),
+      });
       if (response.ok) {
         setNewProject({ projectName: "", destinationUrl: "" });
         fetchProjects();
@@ -84,139 +83,141 @@ function ProjectsPage() {
     }
   };
 
+  const connect = async () => {
+    if (!window.epson || !window.epson.ePOSDevice) {
+      setError("ePOSプリンターSDKが見つかりません");
+      return;
+    }
+    if (!ipAddress || !printerPort) {
+      setError("IPアドレスとポート番号を入力してください");
+      return;
+    }
 
-    const connect = async () => {
-        if (!window.epson || !window.epson.ePOSDevice) {
-            setError('ePOSプリンターSDKが見つかりません');
-            return;
-        }
-        if (!ipAddress || !printerPort) {
-            setError('IPアドレスとポート番号を入力してください');
-            return;
-        }
-
-        let ePosDev = new window.epson.ePOSDevice();
-        ePosDevice.current = ePosDev;
-        ePosDev.connect(ipAddress, printerPort, (data) => {
-            setIsConnected(true);
-            if (data === "OK") {
-                ePosDev.createDevice(
-                    "local_printer",
-                    ePosDev.DEVICE_TYPE_PRINTER,
-                    { crypto: true, buffer: false },
-                    (devobj, retcode) => {
-                        if (retcode === "OK") {
-                            printer.current = devobj;
-                            printer.current.timeout = 60000;
-                            printer.current.onreceive = function(res) {
-                                if (!res.success) {
-                                    setError('印刷に失敗しました: ' + res.code);
-                                }
-                            };
-                            printer.current.onerror = function(err) {
-                                setError('プリンターエラー: ' + err);
-                            };
-                        } else {
-                            setError('プリンターデバイスの作成に失敗しました: ' + retcode);
-                        }
-                    }
-                );
+    let ePosDev = new window.epson.ePOSDevice();
+    ePosDevice.current = ePosDev;
+    ePosDev.connect(ipAddress, printerPort, (data) => {
+      setIsConnected(true);
+      if (data === "OK") {
+        ePosDev.createDevice(
+          "local_printer",
+          ePosDev.DEVICE_TYPE_PRINTER,
+          { crypto: true, buffer: false },
+          (devobj, retcode) => {
+            if (retcode === "OK") {
+              printer.current = devobj;
+              printer.current.timeout = 60000;
+              printer.current.onreceive = function (res) {
+                if (!res.success) {
+                  setError("印刷に失敗しました: " + res.code);
+                }
+              };
+              printer.current.onerror = function (err) {
+                setError("プリンターエラー: " + err);
+              };
             } else {
-                setError('プリンターへの接続に失敗しました: ' + data);
+              setError("プリンターデバイスの作成に失敗しました: " + retcode);
             }
-        });
-    };
+          }
+        );
+      } else {
+        setError("プリンターへの接続に失敗しました: " + data);
+      }
+    });
+  };
 
-    const handleConnect = async () => {
-        Cookies.set("ipAddress", ipAddress);
-        Cookies.set("printerPort", printerPort);
-        setIsConnecting(true);
-        try {
-            await connect();
-        } catch (e) {
-            console.error("接続エラー:", e);
-            setError("プリンターへの接続に失敗しました");
-        } finally {
-            setIsConnecting(false);
+  const handleConnect = async () => {
+    Cookies.set("ipAddress", ipAddress);
+    Cookies.set("printerPort", printerPort);
+    setIsConnecting(true);
+    try {
+      await connect();
+    } catch (e) {
+      console.error("接続エラー:", e);
+      setError("プリンターへの接続に失敗しました");
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const print = async (qrUrl, projectId) => {
+    let prn = printer.current;
+    if (!prn) {
+      await connect();
+      prn = printer.current;
+      if (!prn) {
+        setError("プリンターに接続できませんでした");
+        return;
+      }
+    }
+
+    try {
+      prn.addTextAlign(prn.ALIGN_CENTER);
+      prn.addTextFont(prn.FONT_C);
+      prn.addTextLang("ja");
+      prn.brightness = 1.0;
+      prn.halftone = prn.HALFTONE_ERROR_DIFFUSION;
+      prn.addTextSmooth(true);
+
+      // Add QR code
+      prn.addSymbol(qrUrl, prn.SYMBOL_QRCODE_MODEL_2, prn.LEVEL_L, 8, 0, 0);
+      prn.addFeedLine(2);
+
+      // Add text
+      prn.addTextSize(2, 2);
+      prn.addText("プロジェクトQRコード\n");
+      prn.addFeedLine(1);
+
+      prn.addTextSize(1, 1);
+      prn.addText(`QR URL: ${qrUrl}\n`);
+      prn.addFeedLine(1);
+      prn.addText(`Project ID: ${projectId}\n`);
+      prn.addText(`Generated: ${new Date().toLocaleString("ja-JP")}\n`);
+
+      prn.addFeedLine(2);
+      prn.addCut(prn.CUT_FEED);
+
+      prn.send();
+    } catch (error) {
+      console.error("印刷エラー:", error);
+      setError("印刷処理中にエラーが発生しました");
+    }
+  };
+
+  const handleGenerateQR = async (projectId) => {
+    try {
+      if (!isConnected) {
+        setError("プリンターに接続してください");
+        return;
+      }
+
+      setIsPrinting(true);
+      const response = await fetch(
+        "https://fwd.soshosai.com/projects/createQRCode",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ projectId }),
         }
-    };
+      );
 
-    const print = async (qrUrl, projectId) => {
-        let prn = printer.current;
-        if (!prn) {
-            await connect();
-            prn = printer.current;
-            if (!prn) {
-                setError("プリンターに接続できませんでした");
-                return;
-            }
-        }
+      if (!response.ok) {
+        throw new Error("QRコードの生成に失敗しました");
+      }
 
-        try {
-            prn.addTextAlign(prn.ALIGN_CENTER);
-            prn.addTextFont(prn.FONT_C);
-            prn.addTextLang("ja");
-            prn.brightness = 1.0;
-            prn.halftone = prn.HALFTONE_ERROR_DIFFUSION;
-            prn.addTextSmooth(true);
-            
-            // Add QR code
-            prn.addSymbol(qrUrl, prn.SYMBOL_QRCODE_MODEL_2, prn.LEVEL_L, 8, 0, 0);
-            prn.addFeedLine(2);
-            
-            // Add text
-            prn.addTextSize(2, 2);
-            prn.addText("プロジェクトQRコード\n");
-            prn.addFeedLine(1);
-            
-            prn.addTextSize(1, 1);
-            prn.addText(`QR URL: ${qrUrl}\n`);
-            prn.addFeedLine(1);
-            prn.addText(`Project ID: ${projectId}\n`);
-            prn.addText(`Generated: ${new Date().toLocaleString('ja-JP')}\n`);
-            
-            prn.addFeedLine(2);
-            prn.addCut(prn.CUT_FEED);
-            
-            prn.send();
-        } catch (error) {
-            console.error("印刷エラー:", error);
-            setError("印刷処理中にエラーが発生しました");
-        }
-    };
+      const data = await response.json();
+      const qrUrl = `https://fwd.soshosai.com?id=${data.qrId}`;
 
-    const handleGenerateQR = async (projectId) => {
-        try {
-            if (!isConnected) {
-                setError('プリンターに接続してください');
-                return;
-            }
+      await print(qrUrl, projectId);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsPrinting(false);
+    }
+  };
 
-            setIsPrinting(true);
-            const response = await fetch('https:/fwd.soshosai.com/projects/createQRCode', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ projectId }),
-            });
-            
-            if (!response.ok) {
-                throw new Error('QRコードの生成に失敗しました');
-            }
-
-            const data = await response.json();
-            const qrUrl = `https://fwd.soshosai.com?id=${data.qrId}`;
-
-            await print(qrUrl, projectId);
-        } catch (error) {
-            setError(error.message);
-        } finally {
-            setIsPrinting(false);
-        }
-    };
-
-    const handleDeleteProject = async (projectId) => {
+  const handleDeleteProject = async (projectId) => {
     if (!window.confirm("このプロジェクトを削除してもよろしいですか？")) return;
 
     try {
@@ -351,48 +352,48 @@ function ProjectsPage() {
                     >
                       編集
                     </button>
-                                        <div className="space-x-2">
-                                            {!isConnected && (
-                                                <>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="IPアドレス"
-                                                        value={ipAddress}
-                                                        onChange={(e) => setIpAddress(e.target.value)}
-                                                        className="border rounded px-2 py-1 text-sm w-32"
-                                                    />
-                                                    <input
-                                                        type="text"
-                                                        placeholder="ポート"
-                                                        value={printerPort}
-                                                        onChange={(e) => setPrinterPort(e.target.value)}
-                                                        className="border rounded px-2 py-1 text-sm w-20"
-                                                    />
-                                                    <button
-                                                        onClick={handleConnect}
-                                                        disabled={isConnecting}
-                                                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded"
-                                                    >
-                                                        接続
-                                                    </button>
-                                                </>
-                                            )}
-                                            {isConnected && (
-                                                <button
-                                                    onClick={() => handleGenerateQR(project.id)}
-                                                    disabled={isPrinting}
-                                                    className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-1 px-2 rounded"
-                                                >
-                                                    {isPrinting ? "印刷中..." : "QR生成"}
-                                                </button>
-                                            )}
-                                        </div>
-                                        <button
-                                            onClick={() => handleDeleteProject(project.id)}
-                                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded mr-2"
-                                        >
-                                            削除
-                                        </button>
+                    <div className="space-x-2">
+                      {!isConnected && (
+                        <>
+                          <input
+                            type="text"
+                            placeholder="IPアドレス"
+                            value={ipAddress}
+                            onChange={(e) => setIpAddress(e.target.value)}
+                            className="border rounded px-2 py-1 text-sm w-32"
+                          />
+                          <input
+                            type="text"
+                            placeholder="ポート"
+                            value={printerPort}
+                            onChange={(e) => setPrinterPort(e.target.value)}
+                            className="border rounded px-2 py-1 text-sm w-20"
+                          />
+                          <button
+                            onClick={handleConnect}
+                            disabled={isConnecting}
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded"
+                          >
+                            接続
+                          </button>
+                        </>
+                      )}
+                      {isConnected && (
+                        <button
+                          onClick={() => handleGenerateQR(project.id)}
+                          disabled={isPrinting}
+                          className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-1 px-2 rounded"
+                        >
+                          {isPrinting ? "印刷中..." : "QR生成"}
+                        </button>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => handleDeleteProject(project.id)}
+                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded mr-2"
+                    >
+                      削除
+                    </button>
                     <a
                       href={`/analytics/${project.id}`}
                       className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded inline-block"
