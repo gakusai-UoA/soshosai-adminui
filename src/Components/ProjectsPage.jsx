@@ -20,7 +20,7 @@ function ProjectsPage() {
     return (
       project.adminUserId === null ||
       project.adminUserId === "all" ||
-      project.adminUserId.includes(urrentUserId)
+      project.adminUserId.includes(currentUserId)
     );
   };
 
