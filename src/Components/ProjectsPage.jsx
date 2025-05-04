@@ -384,7 +384,7 @@ function ProjectsPage() {
                         <button
                           onClick={() => {
                             console.log('Generating QR for project:', project);
-                            handleGenerateQR(project.project_id);
+                            handleGenerateQR(project.projectId);
                           }}
                           disabled={isPrinting}
                           className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-1 px-2 rounded"
