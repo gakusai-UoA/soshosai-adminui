@@ -223,14 +223,18 @@ function ProjectsPage() {
       prn.addText(`QR ID: ${qrId}\n`);
       prn.addText(`URL: ${qrUrl}\n`);
       prn.addText(`Generated: ${new Date().toLocaleString("ja-JP")}\n`);
-      prn.addBarcode(
-        qrId,
-        prn.BARCODE_CODE128,
-        prn.HRI_NONE,
-        prn.FONT_A,
-        2,
-        100
-      );
+      const segments = qrId.replace(/-/g, "").match(/.{1,11}/g);
+      segments.forEach((segment) => {
+        prn.addBarcode(
+          segment,
+          prn.BARCODE_CODE128,
+          prn.HRI_NONE,
+          prn.FONT_A,
+          2,
+          32
+        );
+        prn.addFeedLine(1);
+      });
 
       prn.addFeedLine(2);
       prn.addCut(prn.CUT_FEED);
