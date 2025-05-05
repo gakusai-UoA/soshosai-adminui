@@ -93,7 +93,7 @@ function ProjectsPage() {
     if (!editingProject) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/projects/${editingProject.project_id}`, {
+      const response = await fetch(`${API_BASE_URL}/projects/${editingProject.projectId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -60,12 +60,12 @@ const Nav = () => {
             <div className="flex flex-shrink-0 items-center">
               <img
                 className="block h-8 w-auto lg:hidden"
-                src="./logo.png"
+                src="/logo.png"
                 alt="Soshosai-logo"
               />
               <img
                 className="hidden h-8 w-auto lg:block"
-                src="./logo.png"
+                src="/logo.png"
                 alt="Soshosai-logo"
               />
             </div>
@@ -77,14 +77,6 @@ const Nav = () => {
                 >
                   ダッシュボード
                 </Link>
-                {/*
-                <Link
-                  to="/tickets"
-                  className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-                >
-                  チケット管理
-                </Link>
-                */}
                 <Link
                   to="/groups"
                   className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
@@ -125,14 +117,6 @@ const Nav = () => {
             >
               ダッシュボード
             </Link>
-            {/*
-            <Link
-              to="/tickets"
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-            >
-              チケット管理
-            </Link>
-            */}
             <Link
               to="/groups"
               className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
