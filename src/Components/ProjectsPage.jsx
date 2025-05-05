@@ -206,13 +206,10 @@ function ProjectsPage() {
       prn.halftone = prn.HALFTONE_ERROR_DIFFUSION;
       prn.addTextSmooth(true);
 
-      prn.addTextSize(2, 2);
-      prn.addText("プロジェクトQRコード\n");
-      prn.addFeedLine(1);
-
       // Add QR code
       prn.addSymbol(qrUrl, prn.SYMBOL_QRCODE_MODEL_2, prn.LEVEL_L, 8, 0, 0);
       prn.addFeedLine(2);
+      prn.addCut(prn.CUT_FEED);
 
       prn.addTextSize(1, 1);
       prn.addText(`Project: ${selectedProject.name}\n`);
