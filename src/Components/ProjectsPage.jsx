@@ -12,8 +12,12 @@ function ProjectsPage() {
   });
   const [editingProject, setEditingProject] = useState(null);
   const [error, setError] = useState("");
-  const [ipAddress, setIpAddress] = useState(Cookies.get("ipAddress") || "192.168.100.30");
-  const [printerPort, setPrinterPort] = useState(Cookies.get("printerPort") || "8008");
+  const [ipAddress, setIpAddress] = useState(
+    Cookies.get("ipAddress") || "192.168.100.30"
+  );
+  const [printerPort, setPrinterPort] = useState(
+    Cookies.get("printerPort") || "8008"
+  );
   const [isConnecting, setIsConnecting] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [isPrinting, setIsPrinting] = useState(false);
@@ -48,7 +52,7 @@ function ProjectsPage() {
       const response = await fetch(`${API_BASE_URL}/projects`);
       if (response.ok) {
         const data = await response.json();
-        console.log('Fetched projects:', data);
+        console.log("Fetched projects:", data);
         const accessibleProjects = data.filter(userHasAccess);
         setProjects(accessibleProjects);
       } else {
@@ -74,10 +78,10 @@ function ProjectsPage() {
         }),
       });
       if (response.ok) {
-        setNewProject({ 
-          projectName: "", 
+        setNewProject({
+          projectName: "",
           destinationUrl: "",
-          adminUser: Cookies.get("staffId")
+          adminUser: Cookies.get("staffId"),
         });
         fetchProjects();
       } else {
@@ -93,16 +97,19 @@ function ProjectsPage() {
     if (!editingProject) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/projects/${editingProject.projectId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          projectName: editingProject.name,
-          destinationUrl: editingProject.destination_url,
-        }),
-      });
+      const response = await fetch(
+        `${API_BASE_URL}/projects/${editingProject.projectId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            projectName: editingProject.name,
+            destinationUrl: editingProject.destination_url,
+          }),
+        }
+      );
       if (response.ok) {
         setEditingProject(null);
         fetchProjects();
@@ -216,6 +223,14 @@ function ProjectsPage() {
       prn.addText(`QR ID: ${qrId}\n`);
       prn.addText(`URL: ${qrUrl}\n`);
       prn.addText(`Generated: ${new Date().toLocaleString("ja-JP")}\n`);
+      prn.addBarcode(
+        qrId,
+        prn.BARCODE_CODE128,
+        prn.HRI_NONE,
+        prn.FONT_A,
+        2,
+        100
+      );
 
       prn.addFeedLine(2);
       prn.addCut(prn.CUT_FEED);
@@ -231,7 +246,7 @@ function ProjectsPage() {
     try {
       setIsPrinting(true);
       const qrCodes = [];
-      
+
       for (let i = 0; i < quantity; i++) {
         const response = await fetch(`${API_BASE_URL}/projects/createQRCode`, {
           method: "POST",
@@ -414,7 +429,9 @@ function ProjectsPage() {
             <div className="space-y-4">
               <div>
                 <p className="font-semibold">{selectedProject.name}</p>
-                <p className="text-gray-600 text-sm">{selectedProject.destination_url}</p>
+                <p className="text-gray-600 text-sm">
+                  {selectedProject.destination_url}
+                </p>
               </div>
 
               {!isConnected ? (
@@ -468,11 +485,16 @@ function ProjectsPage() {
                   ) : (
                     <div className="space-y-4">
                       <div className="border rounded-md p-4">
-                        <p className="text-sm font-medium mb-2">生成されたQRコード: {generatedQRs.length}枚</p>
+                        <p className="text-sm font-medium mb-2">
+                          生成されたQRコード: {generatedQRs.length}枚
+                        </p>
                         <div className="max-h-48 overflow-y-auto">
                           <ul className="space-y-2">
                             {generatedQRs.map((qr) => (
-                              <li key={qr.qrId} className="flex items-center justify-between text-sm border-b pb-2">
+                              <li
+                                key={qr.qrId}
+                                className="flex items-center justify-between text-sm border-b pb-2"
+                              >
                                 <div>
                                   <div>ID: {qr.qrId}</div>
                                   <div className="text-gray-600 text-xs">
