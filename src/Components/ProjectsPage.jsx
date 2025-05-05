@@ -207,7 +207,7 @@ function ProjectsPage() {
       prn.addTextSmooth(true);
 
       // Add QR code
-      prn.addSymbol(qrUrl, prn.SYMBOL_QRCODE_MODEL_2, prn.LEVEL_L, 8, 0, 0);
+      prn.addSymbol(qrUrl, prn.SYMBOL_QRCODE_MODEL_2, prn.LEVEL_L, 9, 0, 0);
       prn.addFeedLine(2);
       prn.addCut(prn.CUT_FEED);
 
