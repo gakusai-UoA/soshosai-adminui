@@ -226,8 +226,8 @@ function ProjectsPage() {
       const segments = qrId.replace(/-/g, "").match(/.{1,11}/g);
       segments.forEach((segment) => {
         prn.addBarcode(
-          segment,
-          prn.BARCODE_CODE128,
+          segment.toUpperCase(),
+          prn.BARCODE_CODE39,
           prn.HRI_NONE,
           prn.FONT_A,
           2,
